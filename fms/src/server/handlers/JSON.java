@@ -3,13 +3,11 @@ package server.handlers;
 public class JSON {
 
     public static Object decode() {
-        Object result = null;
-        return result;
+        return null;
     }
 
     public static Object encode() {
-        Object result = null;
-        return result;
+        return null;
     }
 
 }
