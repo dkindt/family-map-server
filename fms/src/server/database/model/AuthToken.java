@@ -1,24 +1,31 @@
 package server.database.model;
 
+/**
+ * Represents an authorization token for a User.
+ *
+ * @author Dan Kindt
+ * @version 1.0
+ * @since 15 February 2019
+ */
 public class AuthToken {
 
     private String token;
-    private String userName;
+    private String username;
 
-    public AuthToken(String token, String userName) {
+    public AuthToken(String token, String username) {
         setTokenID(token);
-        setUserName(userName);
+        setUserName(username);
     }
 
     public String getToken() { return this.token; }
-    public String getUserName() { return this.userName; }
+    public String getUserName() { return this.username; }
 
     public void setTokenID(String tokenID) {
         this.token = tokenID;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     @Override

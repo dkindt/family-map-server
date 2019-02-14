@@ -2,7 +2,7 @@ package server.database.model;
 
 public class User {
 
-    private String userName;
+    private String username;
     private String password; // TODO: should be a hash
     private String email;
     private String firstName;
@@ -10,9 +10,9 @@ public class User {
     private String gender;
     private String personID;
 
-    public User(String userName, String password, String email, String firstName,
+    public User(String username, String password, String email, String firstName,
                 String lastName, String gender, String personID) {
-       setUserName(userName);
+       setUserName(username);
        setPassword(password);
        setEmail(email);
        setFirstName(firstName);
@@ -21,15 +21,15 @@ public class User {
        setPersonID(personID);
     }
 
-    public String getUserName() { return this.userName; }
+    public String getUserName() { return this.username; }
     public String getEmail() { return this.email; }
     public String getFirstName() { return this.firstName; }
     public String getLastName() { return this.lastName; }
     public String getGender() { return this.gender; }
     public String getPersonID() { return this.personID; }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {

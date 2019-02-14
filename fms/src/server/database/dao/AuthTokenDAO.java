@@ -23,7 +23,12 @@ public class AuthTokenDAO implements DAO<AuthToken> {
     }
 
     @Override
-    public void remove(AuthToken model) throws DatabaseException {
+    public void update(AuthToken model, String[] params) throws DatabaseException {
+
+    }
+
+    @Override
+    public void delete(AuthToken model) throws DatabaseException {
 
     }
 

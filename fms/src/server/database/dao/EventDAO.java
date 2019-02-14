@@ -23,7 +23,12 @@ public class EventDAO implements DAO<Event> {
     }
 
     @Override
-    public void remove(Event model) throws DatabaseException {
+    public void update(Event model, String[] params) throws DatabaseException {
+
+    }
+
+    @Override
+    public void delete(Event model) throws DatabaseException {
 
     }
 

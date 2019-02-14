@@ -22,7 +22,12 @@ public class UserDAO implements DAO<User> {
     }
 
     @Override
-    public void remove(User model) throws DatabaseException {
+    public void update(User model, String[] params) throws DatabaseException {
+
+    }
+
+    @Override
+    public void delete(User model) throws DatabaseException {
 
     }
 
