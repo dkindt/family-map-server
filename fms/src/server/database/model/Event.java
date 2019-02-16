@@ -1,5 +1,6 @@
 package server.database.model;
 
+/** Represents an Event row in the events table. */
 public class Event {
 
     private String id;
@@ -12,6 +13,18 @@ public class Event {
     private String type;
     private int year;
 
+    /**
+     * Builds an Event object using the following:
+     * @param id Unique identifier for the event (non-empty)
+     * @param descendant User (username) to which person belongs to
+     * @param person personID to which this event belongs
+     * @param latitude of Event's location
+     * @param longitude of Event's location
+     * @param country in which the Event occurred
+     * @param city in which the Event occurred
+     * @param type of Event (birth, baptism, christening, marriage, death, etc.)
+     * @param year in which the Event occurred.
+     */
     public Event(String id, String descendant, String person,
                  float latitude, float longitude, String country,
                  String city, String type, int year) {

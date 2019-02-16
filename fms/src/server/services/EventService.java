@@ -1,7 +1,8 @@
 package server.services;
 
 
-import shared.result.EventResult;
+import shared.result.MultiEventResult;
+import shared.result.SingleEventResult;
 
 /**
  * Provides the service for retrieving a single Event, or, retrieving all the
@@ -9,11 +10,23 @@ import shared.result.EventResult;
  */
 public class EventService {
 
-    public EventResult getEvent(String eventID) {
+    /**
+     * Get a single Event matching the eventID.
+     *
+     * @param eventID to find & retrieve from the database.
+     * @return the found SingleEventResult or null.
+     */
+    public SingleEventResult getEvent(String eventID) {
         return null;
     }
 
-    public EventResult getAllEvents() {
+    /**
+     * Retrieve all of the Event objects from the database
+     * for the currently logged-in User.
+     *
+     * @return MultiEventResult object.
+     */
+    public MultiEventResult getAllEvents() {
         return null;
     }
 

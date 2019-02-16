@@ -7,7 +7,7 @@ public class ClearService {
 
     /**
      * Drop all of the tables in the database.
-     * @return ClearResult
+     * @return ClearResult object
      */
     public ClearResult clear() {
         return null;

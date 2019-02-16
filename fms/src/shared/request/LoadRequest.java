@@ -4,7 +4,7 @@ import server.database.model.Event;
 import server.database.model.Person;
 import server.database.model.User;
 
-/** Represents the request body for the LoadService. */
+/** Represents the HTTP request for the LoadService. */
 public class LoadRequest {
 
     private User[] users;

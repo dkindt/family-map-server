@@ -1,12 +1,6 @@
 package server.database.model;
 
-/**
- * Represents an authorization token for a User.
- *
- * @author Dan Kindt
- * @version 1.0
- * @since 15 February 2019
- */
+/** Represents an authorization token for a User. A row in the `users` table. */
 public class AuthToken {
 
     private String token;

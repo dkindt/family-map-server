@@ -1,8 +1,9 @@
 package shared.request;
 
-/** Represents the request body for the LoginService. */
+/** Represents the HTTP request for the LoginService. */
 public class LoginRequest {
 
-    public  LoginRequest() {}
+    private String username;
+    private String password;
 
 }

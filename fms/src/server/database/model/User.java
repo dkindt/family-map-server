@@ -1,15 +1,26 @@
 package server.database.model;
 
+/** Represents a User row in the users table. */
 public class User {
 
     private String username;
-    private String password; // TODO: should be a hash
+    private String password; // TODO: should be a hash when set???
     private String email;
     private String firstName;
     private String lastName;
     private String gender;
     private String personID;
 
+    /**
+     * Generate a new User object:
+     * @param username (non-empty, unique)
+     * @param password (non-empty)
+     * @param email address
+     * @param firstName first name of the User registering
+     * @param lastName last name of the User registering
+     * @param gender gender of the User registering
+     * @param personID assigned to this's User's generated Person object.
+     */
     public User(String username, String password, String email, String firstName,
                 String lastName, String gender, String personID) {
        setUserName(username);
