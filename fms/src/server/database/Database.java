@@ -26,7 +26,7 @@ public class Database {
     }
 
     public Connection openConnection() throws DatabaseException {
-        final String URI = "jdbc:sqlite:fms.db";
+        final String URI = "jdbc:sqlite:fms.sqlite";
         try {
             connection = DriverManager.getConnection(URI);
             connection.setAutoCommit(false);

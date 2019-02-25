@@ -70,40 +70,32 @@ public class UserDAOTest {
         assertTrue(created);
     }
 
-    @Test(expected = DatabaseException.class)
+    @Test
     public void createNegative() throws DatabaseException {
-        boolean created = false;
+
+        boolean created = true;
         boolean commit = false;
-        Connection connection = database.openConnection();
-        User user1 = new User(
-            "_test_username",
-            "_test_password",
-            "_test_email",
-            "_test_first_name",
-            "_test_last_name",
-            "M",
-            "_test_person_id"
-        );
         try {
+            Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            created = userDAO.create(user);
-            created = userDAO.create(user1);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-            throw e;
+            userDAO.create(user);
+            userDAO.create(user);
+        } catch(DatabaseException e) {
+            created = false;
         } finally {
             database.closeConnection(commit);
         }
-        assertTrue(created);
+        assertFalse(created);
     }
 
     @Test
     public void getPositive() throws DatabaseException {
+
         boolean commit = false;
-        Connection connection = database.openConnection();
         String expectedUsername = user.getUsername();
         String actualUsername;
         try {
+            Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
             userDAO.create(user);
             User u = userDAO.get(expectedUsername);
@@ -112,22 +104,22 @@ public class UserDAOTest {
         } finally {
             database.closeConnection(commit);
         }
-        assert expectedUsername.equals(actualUsername);
-        //assertEquals(expectedUsername, actualUsername);
+        assertEquals(expectedUsername, actualUsername);
     }
 
-    @Test(expected = DatabaseException.class)
+    @Test
     public void getNegative() throws DatabaseException {
+
         boolean commit = false;
-        Connection connection = database.openConnection();
-        String badUsername = "invalid-username-id";
         try {
+            Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            user = userDAO.get(badUsername);
+            user = userDAO.get("invalid-username");
             commit = true;
         } finally {
             database.closeConnection(commit);
         }
+        assertNull(user);
     }
 
     @Test
@@ -136,35 +128,34 @@ public class UserDAOTest {
 
     @Test
     public void deletePositive() throws DatabaseException {
-        boolean deleted = false;
+
+        boolean commit = false;
+        boolean deleted;
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            boolean created = userDAO.create(user);
-            if (created) {
-                deleted = userDAO.delete(user.getUsername());
-            }
-            database.closeConnection(true);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-            database.closeConnection(false);
+            userDAO.create(user);
+            deleted = userDAO.delete("_test_uuid");
+            commit = true;
+        } finally {
+            database.closeConnection(commit);
         }
-        assertTrue(deleted);
+        assertFalse(deleted);
     }
 
     @Test
     public void deleteNegative() throws DatabaseException {
 
-        boolean deleted = false;
+        boolean commit = false;
+        boolean deleted;
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.create(user);
-            database.closeConnection(true);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-            database.closeConnection(false);
+            deleted = userDAO.delete("_test_uuid");
+            commit = true;
+        } finally {
+            database.closeConnection(commit);
         }
-        assertTrue(deleted);
+        assertFalse(deleted);
     }
 }

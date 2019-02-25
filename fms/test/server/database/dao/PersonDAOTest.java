@@ -12,8 +12,8 @@ import static org.junit.Assert.*;
 
 public class PersonDAOTest {
 
-    private Database database;
-    private Person person;
+    private static Database database;
+    private static Person person;
 
     @BeforeClass
     public static void setupDatabase() {
@@ -29,7 +29,7 @@ public class PersonDAOTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         database = new Database();
         person = new Person(
@@ -66,42 +66,41 @@ public class PersonDAOTest {
         assertTrue(created);
     }
 
-    @Test(expected = DatabaseException.class)
+    @Test
     public void createNegative() throws DatabaseException {
         boolean created = false;
-        boolean commit = false;
-        Connection connection = database.openConnection();
-        Person person1 = new Person(
-            "_test_uuid",
-            "_test_descendant",
-            "_test_firstName",
-            "_test_lastName",
-            "M",
-            "_test_father",
-            "_test_mother",
-            "_test_spouse"
-        );
         try {
+            Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
-            created = personDAO.create(person);
-            created = personDAO.create(person1);
+            personDAO.create(person);
+            personDAO.create(person);
+            database.closeConnection(true);
         } catch (DatabaseException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            database.closeConnection(commit);
+            database.closeConnection(false);
+            created = false;
         }
-        assertTrue(created);
+        assertFalse(created);
+        Person compare = person;
+        try {
+            Connection connection = database.openConnection();
+            PersonDAO personDAO = new PersonDAO(connection);
+            compare = personDAO.get(person.getUUID());
+            database.closeConnection(true);
+        } catch (DatabaseException e) {
+            database.closeConnection(false);
+        }
 
+        assertNull(compare);
     }
 
     @Test
     public void getPositive() throws DatabaseException {
+
         boolean commit = false;
-        Connection connection = database.openConnection();
         String expectedUUID = person.getUUID();
         String actualUUID;
         try {
+            Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
             personDAO.create(person);
             Person p = personDAO.get(expectedUUID);
@@ -113,18 +112,19 @@ public class PersonDAOTest {
         assertEquals(expectedUUID, actualUUID);
     }
 
-    @Test(expected = DatabaseException.class)
+    @Test
     public void getNegative() throws DatabaseException {
+
         boolean commit = false;
-        String badUUID = "invalid-username-id";
         try {
             Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
-            person = personDAO.get(badUUID);
+            person = personDAO.get("invalid-uuid");
             commit = true;
         } finally {
             database.closeConnection(commit);
         }
+        assertNull(person);
     }
 
     @Test
@@ -132,12 +132,33 @@ public class PersonDAOTest {
     }
 
     @Test
-    public void deletePositive() {
-
+    public void deletePositive() throws DatabaseException {
+        boolean deleted;
+        boolean commit = false;
+        try {
+            Connection connection = database.openConnection();
+            PersonDAO personDAO = new PersonDAO(connection);
+            personDAO.create(person);
+            deleted = personDAO.delete("_test_uuid");
+            commit = true;
+        } finally {
+            database.closeConnection(commit);
+        }
+        assertTrue(deleted);
     }
 
-    @Test(expected = DatabaseException.class)
-    public void deleteNegative() {
-
+    @Test
+    public void deleteNegative() throws DatabaseException {
+        boolean deleted;
+        boolean commit = false;
+        try {
+            Connection connection = database.openConnection();
+            PersonDAO personDAO = new PersonDAO(connection);
+            deleted = personDAO.delete("_test_uuid");
+            commit = true;
+        } finally {
+            database.closeConnection(commit);
+        }
+        assertFalse(deleted);
     }
 }
