@@ -1,5 +1,8 @@
 package server.database.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /** Represents a Person row in the persons table. */
 public class Person {
 
@@ -11,6 +14,19 @@ public class Person {
     private String father;
     private String mother;
     private String spouse;
+
+    public Person(ResultSet resultSet) throws SQLException {
+        this(
+            resultSet.getString("uuid"),
+            resultSet.getString("descendant"),
+            resultSet.getString("first_name"),
+            resultSet.getString("last_name"),
+            resultSet.getString("gender"),
+            resultSet.getString("father"),
+            resultSet.getString("mother"),
+            resultSet.getString("spouse")
+        );
+    }
 
     /**
      * Generates a single Person
@@ -97,6 +113,11 @@ public class Person {
 
     public void setSpouse(String spouse) {
         this.spouse = spouse;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Person(uuid='%s')", uuid);
     }
 
     @Override

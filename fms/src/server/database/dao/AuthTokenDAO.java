@@ -3,37 +3,23 @@ package server.database.dao;
 import server.database.model.AuthToken;
 import server.exceptions.DatabaseException;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class AuthTokenDAO implements DAO<AuthToken> {
+public class AuthTokenDAO extends DAO<AuthToken> {
 
-    @Override
-    public void create() throws DatabaseException {
-
+    public AuthTokenDAO(Connection connection) {
+        super(connection, "auth", "token");
     }
 
     @Override
-    public AuthToken get(String id) throws DatabaseException {
+    AuthToken modelFromResultSet(ResultSet resultSet) throws SQLException {
         return null;
     }
 
     @Override
-    public List<AuthToken> getAll() throws DatabaseException {
-        return null;
-    }
-
-    @Override
-    public void update(AuthToken model, String[] params) throws DatabaseException {
-
-    }
-
-    @Override
-    public void delete(AuthToken model) throws DatabaseException {
-
-    }
-
-    @Override
-    public void clear() throws DatabaseException {
-
+    boolean create(AuthToken model) throws DatabaseException {
+        return false;
     }
 }

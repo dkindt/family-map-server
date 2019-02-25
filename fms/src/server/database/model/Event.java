@@ -1,5 +1,8 @@
 package server.database.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /** Represents an Event row in the events table. */
 public class Event {
 
@@ -12,6 +15,20 @@ public class Event {
     private String city;
     private String type;
     private int year;
+
+    public Event(ResultSet resultSet) throws SQLException {
+        this(
+            resultSet.getString("id"),
+            resultSet.getString("descendant"),
+            resultSet.getString("person"),
+            resultSet.getFloat("latitude"),
+            resultSet.getFloat("longitude"),
+            resultSet.getString("country"),
+            resultSet.getString("city"),
+            resultSet.getString("type"),
+            resultSet.getInt("year")
+        );
+    }
 
     /**
      * Builds an Event object using the following:
@@ -39,55 +56,75 @@ public class Event {
         setYear(year);
     }
 
-    public String getID() { return this.id; }
-    public String getDescendant() { return this.descendant; }
-    public String getPerson() { return this.person; }
-    public float getLatitude() { return this.latitude; }
-    public float getLongitude() { return this.longitude; }
-    public String getCountry() { return this.country; }
-    public String getCity() { return this.city; }
-    public String getType() { return this.type; }
-    public int getYear() { return this.year; }
+    public String getId() {
+        return id;
+    }
 
     public void setID(String id) {
         this.id = id;
+    }
+
+    public String getDescendant() {
+        return descendant;
     }
 
     public void setDescendant(String descendant) {
         this.descendant = descendant;
     }
 
+    public String getPerson() {
+        return person;
+    }
+
     public void setPerson(String person) {
         this.person = person;
+    }
+
+    public float getLatitude() {
+        return latitude;
     }
 
     public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
+    public float getLongitude() {
+        return longitude;
+    }
+
     public void setLongitude(float longitude) {
         this.longitude = longitude;
+    }
+
+    public String getCountry() {
+        return country;
     }
 
     public void setCountry(String country) {
         this.country = country;
     }
 
+    public String getCity() {
+        return city;
+    }
+
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
+    public int getYear() {
+        return year;
+    }
+
     public void setYear(int year) {
         this.year = year;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
 }

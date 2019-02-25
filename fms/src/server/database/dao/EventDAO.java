@@ -3,37 +3,23 @@ package server.database.dao;
 import server.database.model.Event;
 import server.exceptions.DatabaseException;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class EventDAO implements DAO<Event> {
+public class EventDAO extends DAO<Event> {
 
-    @Override
-    public void create() throws DatabaseException {
-
+    public EventDAO(Connection connection) {
+        super(connection, "events", "id");
     }
 
     @Override
-    public Event get(String id) throws DatabaseException {
-        return null;
+    Event modelFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Event(resultSet);
     }
 
     @Override
-    public List<Event> getAll() throws DatabaseException {
-        return null;
-    }
-
-    @Override
-    public void update(Event model, String[] params) throws DatabaseException {
-
-    }
-
-    @Override
-    public void delete(Event model) throws DatabaseException {
-
-    }
-
-    @Override
-    public void clear() throws DatabaseException {
-
+    boolean create(Event model) throws DatabaseException {
+        return false;
     }
 }

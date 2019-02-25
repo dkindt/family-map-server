@@ -13,7 +13,7 @@ public class EventService {
     /**
      * Get a single Event matching the eventID.
      *
-     * @param eventID to find & retrieve from the database.
+     * @param eventID of the Event to retrieve.
      * @return the found SingleEventResult or null.
      */
     public SingleEventResult getEvent(String eventID) {
