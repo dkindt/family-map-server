@@ -14,8 +14,18 @@ public class EventDAO extends DAO<Event> {
     }
 
     @Override
-    Event modelFromResultSet(ResultSet resultSet) throws SQLException {
-        return new Event(resultSet);
+    Event createModel(ResultSet resultSet) throws SQLException {
+        Event event = new Event();
+        event.setUUID(resultSet.getString("id"));
+        event.setDescendant(resultSet.getString("descendant"));
+        event.setPerson(resultSet.getString("person"));
+        event.setLatitude(resultSet.getFloat("latitude"));
+        event.setLongitude(resultSet.getFloat("longitude"));
+        event.setCountry(resultSet.getString("country"));
+        event.setCity(resultSet.getString("city"));
+        event.setType(resultSet.getString("type"));
+        event.setYear(resultSet.getInt("year"));
+        return event;
     }
 
     @Override

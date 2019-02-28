@@ -1,11 +1,5 @@
 package server.database.model;
 
-import server.exceptions.DatabaseException;
-
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 /** Represents a User row in the users table. */
 public class User {
 
@@ -17,44 +11,8 @@ public class User {
     private String gender;
     private String personID;
 
-    public User(ResultSet resultSet) throws SQLException {
-        this(
-            resultSet.getString("username"),
-            resultSet.getString("password"),
-            resultSet.getString("email"),
-            resultSet.getString("first_name"),
-            resultSet.getString("last_name"),
-            resultSet.getString("gender"),
-            resultSet.getString("person_id")
-        );
-    }
+    public User() {
 
-    /**
-     * Generate a new User object:
-     * @param username (non-empty, unique)
-     * @param password (non-empty)
-     * @param email address
-     * @param firstName first name of the User registering
-     * @param lastName last name of the User registering
-     * @param gender gender of the User registering
-     * @param personID assigned to this's User's generated Person object.
-     */
-    public User(String username, String password, String email, String firstName,
-                String lastName, String gender, String personID) {
-       setUsername(username);
-       setPassword(password);
-       setEmail(email);
-       setFirstName(firstName);
-       setLastName(lastName);
-       setGender(gender);
-       setPersonID(personID);
-    }
-    public int getNumFields() {
-        getClass().getDeclaredFields();
-        return getColumnNames().length;
-    }
-    public Field[] getColumnNames() {
-        return getClass().getDeclaredFields();
     }
 
     public String getUsername() {

@@ -37,15 +37,14 @@ public class UserDAOTest {
     public void setUp() throws Exception {
 
         database = new Database();
-        user = new User(
-            "_test_username",
-            "_test_password",
-            "_test_email",
-            "_test_first_name",
-            "_test_last_name",
-            "M",
-            "_test_person_id"
-        );
+        user = new User();
+        user.setUsername("test-username");
+        user.setPassword("test-password");
+        user.setEmail("test-email");
+        user.setFirstName("test-first-name");
+        user.setLastName("test-last-name");
+        user.setGender("M-test-gender");
+        user.setPersonID("test-person-id");
     }
 
     @After
@@ -79,7 +78,7 @@ public class UserDAOTest {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
             userDAO.create(user);
-            userDAO.create(user);
+            created = userDAO.create(user);
         } catch(DatabaseException e) {
             created = false;
         } finally {

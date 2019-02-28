@@ -1,8 +1,5 @@
 package server.database.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 /** Represents a Person row in the persons table. */
 public class Person {
 
@@ -15,40 +12,8 @@ public class Person {
     private String mother;
     private String spouse;
 
-    public Person(ResultSet resultSet) throws SQLException {
-        this(
-            resultSet.getString("uuid"),
-            resultSet.getString("descendant"),
-            resultSet.getString("first_name"),
-            resultSet.getString("last_name"),
-            resultSet.getString("gender"),
-            resultSet.getString("father"),
-            resultSet.getString("mother"),
-            resultSet.getString("spouse")
-        );
-    }
+    public Person() {
 
-    /**
-     * Generates a single Person
-     * @param uuid Unique identifier for the person
-     * @param descendant User (username) to which person belongs
-     * @param firstName Person's first name
-     * @param lastName Person's last name
-     * @param gender Person's gender ("f" or "m")
-     * @param father personID for the father (optional)
-     * @param mother personID for the mother (optional)
-     * @param spouse personID for the spouse (optional)
-     */
-    public Person(String uuid, String descendant, String firstName, String lastName,
-                  String gender, String father, String mother, String spouse) {
-        setUUID(uuid);
-        setDescendant(descendant);
-        setFirstName(firstName);
-        setLastName(lastName);
-        setGender(gender);
-        setFather(father);
-        setMother(mother);
-        setSpouse(spouse);
     }
 
     public String getUUID() {

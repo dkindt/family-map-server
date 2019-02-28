@@ -15,14 +15,24 @@ public class UserDAO extends DAO<User> {
     }
 
     @Override
-    User modelFromResultSet(ResultSet resultSet) throws SQLException {
-        return new User(resultSet);
+    User createModel(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setUsername(resultSet.getString("username"));
+        user.setPassword(resultSet.getString("password"));
+        user.setEmail(resultSet.getString("email"));
+        user.setFirstName(resultSet.getString("first_name"));
+        user.setLastName(resultSet.getString("last_name"));
+        user.setGender(resultSet.getString("gender"));
+        user.setPersonID(resultSet.getString("person_id"));
+        return user;
     }
 
     @Override
     public boolean create(User user) throws DatabaseException {
-        String sql = "INSERT INTO " + tableName + " VALUES (?,?,?,?,?,?,?)";
+
+        String sql = String.format("INSERT INTO %s VALUES (?,?,?,?,?,?,?)", tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getEmail());
@@ -30,8 +40,10 @@ public class UserDAO extends DAO<User> {
             statement.setString(5, user.getLastName());
             statement.setString(6, user.getGender());
             statement.setString(7, user.getPersonID());
+
             int rows = statement.executeUpdate();
             if (rows == 1) return true;
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DatabaseException("Failed to create new User!");

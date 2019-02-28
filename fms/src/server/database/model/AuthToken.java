@@ -6,19 +6,18 @@ public class AuthToken {
     private String token;
     private String username;
 
-    public AuthToken(String token, String username) {
-        setTokenID(token);
-        setUserName(username);
+    public AuthToken() {
+
     }
 
     public String getToken() { return this.token; }
     public String getUserName() { return this.username; }
 
-    public void setTokenID(String tokenID) {
+    public void setToken(String tokenID) {
         this.token = tokenID;
     }
 
-    public void setUserName(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

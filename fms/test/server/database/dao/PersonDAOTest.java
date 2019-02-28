@@ -12,8 +12,8 @@ import static org.junit.Assert.*;
 
 public class PersonDAOTest {
 
-    private static Database database;
-    private static Person person;
+    private Database database;
+    private Person person;
 
     @BeforeClass
     public static void setupDatabase() {
@@ -32,16 +32,15 @@ public class PersonDAOTest {
     public void setUp() {
 
         database = new Database();
-        person = new Person(
-            "_test_uuid",
-            "_test_descendant",
-            "_test_firstName",
-            "_test_lastName",
-            "M",
-            "_test_father",
-            "_test_mother",
-            "_test_spouse"
-        );
+        person = new Person();
+        person.setUUID("test-uuid");
+        person.setDescendant("test-descendant");
+        person.setFirstName("test-first-name");
+        person.setLastName("test-last-name");
+        person.setGender("M-test-gender");
+        person.setFather("test-father");
+        person.setMother("test-mother");
+        person.setSpouse("test-spouse");
     }
 
     @After
@@ -68,6 +67,7 @@ public class PersonDAOTest {
 
     @Test
     public void createNegative() throws DatabaseException {
+
         boolean created = false;
         try {
             Connection connection = database.openConnection();
@@ -139,7 +139,7 @@ public class PersonDAOTest {
             Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
             personDAO.create(person);
-            deleted = personDAO.delete("_test_uuid");
+            deleted = personDAO.delete("test-uuid");
             commit = true;
         } finally {
             database.closeConnection(commit);

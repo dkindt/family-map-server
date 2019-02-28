@@ -28,19 +28,19 @@ abstract class DAO<T> {
         this.primaryKeyName = primaryKeyName;
     }
 
-    abstract T modelFromResultSet(ResultSet resultSet) throws SQLException;
+    abstract T createModel(ResultSet resultSet) throws SQLException;
 
     abstract boolean create(T model) throws DatabaseException;
 
     T get(String id) throws DatabaseException {
-        String sql = "SELECT * FROM " + tableName + " WHERE " + primaryKeyName + "=?";
+        String sql = String.format("SELECT * FROM %s WHERE %s=?", tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             // prepare SQL query against SQL-injection.
             statement.setString(1, id);
             // execute the query, build, and return the Person object
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return modelFromResultSet(resultSet);
+                return createModel(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ abstract class DAO<T> {
             statement.setString(1, tableName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                results.add(modelFromResultSet(resultSet));
+                results.add(createModel(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
