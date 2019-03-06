@@ -1,32 +1,54 @@
 package server;
 
 import com.sun.net.httpserver.HttpServer;
-import server.handlers.DefaultHandler;
+import server.database.Database;
+import server.exceptions.DatabaseException;
+import server.handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.logging.*;
 
 public class Server {
 
-    // The maximum number of waiting incoming connections to queue.
-    // While this value is necessary, for our purposes it is unimportant.
-    // Take CS 460 for a deeper understanding of what it means.
     private static final int MAX_WAITING_CONNECTIONS = 12;
+    private static Logger log;
 
-    // Java provides an HttpServer class that can be used to embed
-    // an HTTP server in any Java program.
-    // Using the HttpServer class, you can easily make a Java
-    // program that can receive incoming HTTP requests, and respond
-    // with appropriate HTTP responses.
-    // HttpServer is the class that actually implements the HTTP network
-    // protocol (be glad you don't have to).
-    // The "server" field contains the HttpServer instance for this program,
-    // which is initialized in the "run" method below.
+    static {
+        try {
+            initLog();
+        }
+        catch (IOException e) {
+            System.out.println(String.format("Could not initialize log: %s", e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+    private static void initLog() throws IOException {
+
+        Level logLevel = Level.FINEST;
+
+        log = Logger.getLogger("family-map-server");
+        log.setLevel(logLevel);
+        log.setUseParentHandlers(false);
+
+        Handler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(logLevel);
+        consoleHandler.setFormatter(new SimpleFormatter());
+        log.addHandler(consoleHandler);
+
+        FileHandler fileHandler = new FileHandler("fms.log", false);
+        fileHandler.setLevel(logLevel);
+        fileHandler.setFormatter(new SimpleFormatter());
+        log.addHandler(fileHandler);
+    }
+
     private HttpServer server;
 
-    // This method initializes and runs the server.
-    // The "portNumber" parameter specifies the port number on which the
-    // server should accept incoming client connections.
+    /**
+     * Initializes and runs the Server on a specified port number.
+     * @param portNumber specifies the port number to listen on.
+     */
     private void run(String portNumber) {
 
         // Since the server has no "user interface", it should display "log"
@@ -34,15 +56,16 @@ public class Server {
         // This allows a system administrator (or you) to know what is happening
         // inside the server, which can be useful for diagnosing problems
         // that may occur.
-        System.out.println("Initializing HTTP Server");
+        log.info("Initializing HTTP Server");
 
         try {
             // Create a new HttpServer object.
             // Rather than calling "new" directly, we instead create
             // the object by calling the HttpServer.create static factory method.
             // Just like "new", this method returns a reference to the new object.
+            String hostname = "localhost";
             server = HttpServer.create(
-                new InetSocketAddress(Integer.parseInt(portNumber)),
+                new InetSocketAddress(hostname, Integer.parseInt(portNumber)),
                 MAX_WAITING_CONNECTIONS);
         }
         catch (IOException e) {
@@ -54,17 +77,19 @@ public class Server {
         // This line is necessary, but its function is unimportant for our purposes.
         server.setExecutor(null);
 
-        // Log message indicating that the server is creating and installing
-        // its HTTP handlers.
         // The HttpServer class listens for incoming HTTP requests.  When one
         // is received, it looks at the URL path inside the HTTP request, and
         // forwards the request to the handler for that URL path.
-        System.out.println("Creating contexts");
+        // TL;DR this sets up our server's `routes`
+        log.info("Creating contexts");
         server.createContext("/", new DefaultHandler());
-
-        // Log message indicating that the HttpServer is about the start accepting
-        // incoming client connections.
-        System.out.println("Starting server");
+        server.createContext("/user/login", new LoginHandler());
+        server.createContext("/user/register", new RegisterHandler());
+        server.createContext("/clear/", new ClearHandler());
+        server.createContext("/load/", new ClearHandler());
+        server.createContext("/event", new EventHandler());
+        server.createContext("/fill", new FillHandler());
+        server.createContext("/person", new PersonHandler());
 
         // Tells the HttpServer to start accepting incoming client connections.
         // This method call will return immediately, and the "main" method
@@ -74,16 +99,16 @@ public class Server {
         // in the background.
         server.start();
 
-        // Log message indicating that the server has successfully started.
-        System.out.println("Server started");
+        log.info(String.format("Server started at: %s", server.getAddress()));
     }
 
     // "main" method for the server program
     // "args" should contain one command-line argument, which is the port number
     // on which the server should accept incoming client connections.
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DatabaseException, IOException {
         String portNumber = args[0];
         new Server().run(portNumber);
+        new Database().init("sql/db_init.sql");
     }
 
 }

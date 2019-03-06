@@ -4,9 +4,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -17,7 +16,7 @@ public class DefaultHandler implements HttpHandler {
 
     private final static String ROOT_DIR = "web";
     private final static String DEFAULT_PAGE = "index.html";
-    private final static String NOT_FOUND_PAGE = "404.html";
+    private final static String NOT_FOUND_PAGE = "html/404.html";
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -29,37 +28,38 @@ public class DefaultHandler implements HttpHandler {
         try {
             if (isValidRequestMethod(exchange)) {
 
-                // File file = getFile(exchange.getRequestURI());
                 serveFile(exchange);
 
             } else {
                 // unsupported http method
+                // TODO: send response
+                System.out.println("unsupported method");
             }
         } catch (IOException e) {
-
+            System.out.println("failed");
         }
     }
 
     private boolean isValidRequestMethod(HttpExchange exchange) {
-        String VALID_HTTP_METHOD = "GET";
-        return exchange.getRequestMethod().equalsIgnoreCase(VALID_HTTP_METHOD);
+        final String HTTP_METHOD = "GET";
+        return exchange.getRequestMethod().equalsIgnoreCase(HTTP_METHOD );
     }
 
     private Path buildFilePath(URI uri) {
 
-        FileSystem fileSystem = FileSystems.getDefault();
+        FileSystem fs = FileSystems.getDefault();
         String path = uri.getPath();
         if (path.equals("/")) {
-            path = String.format("/%s", DEFAULT_PAGE);
+            path = String.format("%s", DEFAULT_PAGE);
         }
-        if (!isValidFilePath(path)) {
-            path = String.format("/%s", NOT_FOUND_PAGE);
+        Path fullPath = fs.getPath(ROOT_DIR, path);
+        if (!isValidFilePath(fullPath)) {
+            fullPath = fs.getPath(ROOT_DIR, NOT_FOUND_PAGE);
         }
-        return fileSystem.getPath(ROOT_DIR, path);
+        return fullPath;
     }
 
-    private boolean isValidFilePath(String filePath) {
-        Path path = Path.of(filePath);
+    private boolean isValidFilePath(Path path) {
         return Files.exists(path) && Files.isReadable(path);
     }
 
@@ -67,26 +67,15 @@ public class DefaultHandler implements HttpHandler {
 
         // Build the path to the file and determine it's content-type
         Path path = buildFilePath(exchange.getRequestURI());
-        String ext = Files.probeContentType(path);
-        String contentType = "";
 
-        File file = path.toFile();
+        //Headers headers = exchange.getResponseHeaders();
+        //headers.add("Server", "FMS");
+        //headers.add("Connection", "close");
+        //headers.add("Content-Type", "text/html");
 
-    }
-
-    private void sendResponse(
-        HttpExchange exchange,
-        InputStream stream,
-        int code,
-        long length) {
-
-        Headers headers = exchange.getResponseHeaders();
-        headers.add("Server", "FMS");
-        headers.add("Connection", "close");
-        headers.add("Content-Length", String.valueOf(length));
-
-
-
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+        Files.copy(path, exchange.getResponseBody());
+        exchange.close();
     }
 
 }

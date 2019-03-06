@@ -6,9 +6,11 @@ import server.database.dao.PersonDAO;
 import server.database.dao.UserDAO;
 import server.exceptions.DatabaseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
+import static java.lang.String.format;
 import static shared.util.FileHelper.loadFile;
 
 public class Database {
@@ -26,9 +28,9 @@ public class Database {
     }
 
     public Connection openConnection() throws DatabaseException {
-        final String URI = "jdbc:sqlite:fms.sqlite";
+        final String DB_URI = "jdbc:sqlite:family-map.db";
         try {
-            connection = DriverManager.getConnection(URI);
+            connection = DriverManager.getConnection(DB_URI);
             connection.setAutoCommit(false);
         } catch (SQLException e) {
             e.printStackTrace();

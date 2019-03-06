@@ -15,7 +15,8 @@ public class UserDAO extends DAO<User> {
     }
 
     @Override
-    User createModel(ResultSet resultSet) throws SQLException {
+    User modelFactory(ResultSet resultSet) throws SQLException {
+
         User user = new User();
         user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));

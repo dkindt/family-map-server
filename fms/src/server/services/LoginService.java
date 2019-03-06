@@ -8,29 +8,42 @@ import shared.request.LoginRequest;
 import shared.result.LoginResult;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /** Provides service for logging a User into their account. */
 public class LoginService {
 
+    private static Logger log = Logger.getLogger("family-map-server");
+
     /**
      * Logs a User in and generates a new auth token.
      *
-     * @param loginRequest object containing User's credentials.
+     * @param request object containing User's credentials.
      * @return LoginResult object.
      */
-    public LoginResult login(LoginRequest loginRequest) {
+    public LoginResult login(LoginRequest request) throws DatabaseException {
 
+        log.entering("LoginService", "login");
         Database db = new Database();
-        try {
 
-            Connection connection = db.openConnection();
+        try (Connection connection = db.openConnection()) {
             UserDAO userDAO = new UserDAO(connection);
-            String username = loginRequest.getUsername();
-            String password = loginRequest.getPassword();
-            User user = new User();
 
-        } catch (DatabaseException e) {
+            Map<String, String> params = new LinkedHashMap<>();
+            params.put("username", request.getUsername());
+            params.put("password", request.getPassword());
 
+            User user = userDAO.get(params);
+
+
+            db.closeConnection(true);
+
+        } catch (DatabaseException | SQLException e) {
+            e.printStackTrace();
+            db.closeConnection(false);
         }
 
         return null;

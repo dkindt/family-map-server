@@ -6,8 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static java.lang.String.format;
 
 /**
  * Provides the base DAO interface for each service.
@@ -23,41 +24,76 @@ abstract class DAO<T> {
 
     public DAO() {}
     public DAO(Connection connection, String tableName, String primaryKeyName) {
+
         this.connection = connection;
         this.tableName = tableName;
         this.primaryKeyName = primaryKeyName;
     }
 
-    abstract T createModel(ResultSet resultSet) throws SQLException;
+    abstract T modelFactory(ResultSet resultSet) throws SQLException;
 
-    abstract boolean create(T model) throws DatabaseException;
+    abstract public boolean create(T model) throws DatabaseException;
 
-    T get(String id) throws DatabaseException {
-        String sql = String.format("SELECT * FROM %s WHERE %s=?", tableName, primaryKeyName);
+    public T get(Map<String, String> fields) throws DatabaseException {
+
+        String sql = format(
+          "SELECT * FROM %s WHERE %s", tableName,
+          String.join(" AND ",
+              fields.keySet()
+                .stream()
+                .map(s -> format("%s=?", s))
+                .toArray(String[]::new))
+        );
+        System.out.println(sql);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // prepare SQL query against SQL-injection.
+            int paramIdx = 1;
+            for (String value : fields.values()) {
+                System.out.println(value);
+                statement.setObject(paramIdx++, value);
+            }
+            // execute the query, build, and return the Person object
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                System.out.println("result set exists");
+                return modelFactory(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DatabaseException("Failed to get() with params!");
+        }
+        return null;
+    }
+
+    public T get(String id) throws DatabaseException {
+
+        String sql = format("SELECT * FROM %s WHERE %s=?", tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             // prepare SQL query against SQL-injection.
             statement.setString(1, id);
             // execute the query, build, and return the Person object
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createModel(resultSet);
+                return modelFactory(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DatabaseException(
-                String.format("Failed to get(id='%s')", id));
+                format("Failed to get(id='%s')", id));
         }
         return null; // Person with uuid does not exist
     }
 
-    List<T> getAll() throws DatabaseException {
+    public List<T> getAll() throws DatabaseException {
+
         List<T> results = new ArrayList<>();
-        String sql = "SELECT * FROM " + tableName;
+        String sql = format("SELECT * FROM %s", tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, tableName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                results.add(createModel(resultSet));
+                results.add(modelFactory(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,7 +102,8 @@ abstract class DAO<T> {
         return results;
     }
 
-    boolean delete(String id) throws DatabaseException {
+    public boolean delete(String id) throws DatabaseException {
+
         String sql = "DELETE FROM " + tableName + " WHERE " + primaryKeyName + "=?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -75,7 +112,7 @@ abstract class DAO<T> {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DatabaseException(
-                String.format("Failed to delete(id='%s')", id));
+                format("Failed to delete(id='%s')", id));
         }
         return false;
     }
@@ -88,7 +125,7 @@ abstract class DAO<T> {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DatabaseException(
-                String.format("Failed to clear(table='%s')", tableName));
+                format("Failed to clear(table='%s')", tableName));
         }
     }
 

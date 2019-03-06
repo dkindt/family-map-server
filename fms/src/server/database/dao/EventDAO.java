@@ -14,7 +14,7 @@ public class EventDAO extends DAO<Event> {
     }
 
     @Override
-    Event createModel(ResultSet resultSet) throws SQLException {
+    Event modelFactory(ResultSet resultSet) throws SQLException {
         Event event = new Event();
         event.setUUID(resultSet.getString("id"));
         event.setDescendant(resultSet.getString("descendant"));
@@ -29,7 +29,7 @@ public class EventDAO extends DAO<Event> {
     }
 
     @Override
-    boolean create(Event model) throws DatabaseException {
+    public boolean create(Event model) throws DatabaseException {
         return false;
     }
 }

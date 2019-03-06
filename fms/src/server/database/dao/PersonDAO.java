@@ -16,7 +16,7 @@ public class PersonDAO extends DAO<Person> {
     }
 
     @Override
-    Person createModel(ResultSet resultSet) throws SQLException {
+    Person modelFactory(ResultSet resultSet) throws SQLException {
         Person person = new Person();
         person.setUUID(resultSet.getString("uuid"));
         person.setDescendant(resultSet.getString("descendant"));

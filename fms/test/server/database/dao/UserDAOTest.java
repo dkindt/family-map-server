@@ -12,6 +12,10 @@ import server.exceptions.DatabaseException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +27,7 @@ public class UserDAOTest {
     @BeforeClass
     public static void setupDatabase() {
         Database db = new Database();
-        String path = "src/server/database/sql/db_init.sql";
+        String path = "sql/db_init.sql";
         try {
             db.init(path);
         } catch(IOException e) {
@@ -85,6 +89,28 @@ public class UserDAOTest {
             database.closeConnection(commit);
         }
         assertFalse(created);
+    }
+
+    @Test
+    public void getWithParams() throws DatabaseException {
+
+        boolean commit = false;
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("username", "test-username");
+        params.put("password", "test-password");
+        String expectedUsername = user.getUsername();
+        String actualUsername;
+        try {
+            Connection connection = database.openConnection();
+            UserDAO userDAO = new UserDAO(connection);
+            userDAO.create(user);
+            User u = userDAO.get(params);
+            actualUsername = u.getUsername();
+            commit = true;
+        } finally {
+            database.closeConnection(commit);
+        }
+        assertEquals(expectedUsername, actualUsername);
     }
 
     @Test

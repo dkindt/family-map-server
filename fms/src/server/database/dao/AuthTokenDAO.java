@@ -14,7 +14,7 @@ public class AuthTokenDAO extends DAO<AuthToken> {
     }
 
     @Override
-    AuthToken createModel(ResultSet resultSet) throws SQLException {
+    AuthToken modelFactory(ResultSet resultSet) throws SQLException {
         AuthToken token = new AuthToken();
         token.setToken(resultSet.getString("token"));
         token.setUsername(resultSet.getString("username"));
@@ -22,7 +22,7 @@ public class AuthTokenDAO extends DAO<AuthToken> {
     }
 
     @Override
-    boolean create(AuthToken model) throws DatabaseException {
+    public boolean create(AuthToken model) throws DatabaseException {
         return false;
     }
 }

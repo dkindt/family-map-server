@@ -5,9 +5,9 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class UserHandler implements HttpHandler {
+public class RegisterHandler implements HttpHandler {
 
-    public UserHandler() {
+    public RegisterHandler() {
 
     }
 

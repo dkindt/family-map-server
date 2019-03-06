@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS persons;
-DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS auth;
+DROP TABLE IF EXISTS persons;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS events;
 
 CREATE TABLE auth (
   token VARCHAR(255) NOT NULL,
@@ -69,4 +69,26 @@ CREATE TABLE events (
     ON DELETE NO ACTION
 );
 
+-- SEED TABLES WITH SOME DATA
+INSERT INTO users
+VALUES (
+  'dkindt',
+  'password',
+  'dkindt@byu.edu',
+  'dan',
+  'kindt',
+  'm',
+  'test-person-id-dkindt'
+);
 
+INSERT INTO persons
+VALUES (
+  'test-person-id-dkindt',
+  'dkindt',
+  'dan',
+  'kindt',
+  'm',
+  'dkindt-father-id',
+  'dkindt-mother-id',
+  'dkindt-spouse-id'
+);
