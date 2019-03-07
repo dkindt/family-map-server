@@ -1,5 +1,7 @@
 package server.database.model;
 
+import static java.lang.String.format;
+
 /** Represents an authorization token for a User. A row in the `users` table. */
 public class AuthToken {
 
@@ -22,7 +24,7 @@ public class AuthToken {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public String toString() {
+        return format("AuthToken(token='%s', username='%s')", token, username);
     }
 }

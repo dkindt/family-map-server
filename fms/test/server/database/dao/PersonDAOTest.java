@@ -45,7 +45,7 @@ public class PersonDAOTest {
 
     @After
     public void tearDown() throws Exception {
-        database.clearTables();
+        database.clear();
     }
 
     @Test

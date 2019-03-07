@@ -8,11 +8,21 @@ public class RegistrationResult {
     private String personID;
     private String message;
 
+    public RegistrationResult(String message) {
+        setMessage(message);
+    }
+
+    public RegistrationResult(String authToken, String username, String personID) {
+        setAuthToken(authToken);
+        setUsername(username);
+        setPersonID(personID);
+    }
+
     public RegistrationResult(String authToken, String username, String personID, String message) {
-        this.authToken = authToken;
-        this.username = username;
-        this.personID = personID;
-        this.message = message;
+        setAuthToken(authToken);
+        setUsername(username);
+        setPersonID(personID);
+        setMessage(message);
     }
 
     public String getAuthToken() {

@@ -1,5 +1,6 @@
 package server.database.model;
 
+
 /** Represents a User row in the users table. */
 public class User {
 

@@ -5,8 +5,13 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import server.services.FillService;
 import shared.request.FillRequest;
+import shared.result.FillResult;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FillHandler implements HttpHandler {
 
@@ -20,12 +25,25 @@ public class FillHandler implements HttpHandler {
         if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 
             Headers headers = exchange.getRequestHeaders();
-            String path = exchange.getRequestURI().getPath();
+            Map<String, String> params = parsePath(exchange.getRequestURI().getPath());
+            System.out.println(params.get("username"));
+            System.out.println(params.get("generations"));
 
             FillService service = new FillService();
-            service.fill(new FillRequest());
+            FillResult result = service.fill(new FillRequest());
 
         }
+    }
 
+    private Map<String, String> parsePath(String path) {
+
+        final String pattern = "(?i)^/fill/(?<username>[^/]+)(?:/(?<generations>[0-9]+))?$";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(path);
+        boolean matches = matcher.find();
+        return new HashMap<>(){{
+            put("username", matcher.group("username"));
+            put("generations", matcher.group("generations"));
+        }};
     }
 }

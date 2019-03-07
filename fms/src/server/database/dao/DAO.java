@@ -44,19 +44,17 @@ abstract class DAO<T> {
                 .map(s -> format("%s=?", s))
                 .toArray(String[]::new))
         );
-        System.out.println(sql);
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             // prepare SQL query against SQL-injection.
             int paramIdx = 1;
             for (String value : fields.values()) {
-                System.out.println(value);
                 statement.setObject(paramIdx++, value);
             }
             // execute the query, build, and return the Person object
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                System.out.println("result set exists");
                 return modelFactory(resultSet);
             }
         } catch (SQLException e) {
@@ -118,15 +116,18 @@ abstract class DAO<T> {
     }
 
 
-    public void clear() throws DatabaseException {
+    public int clear() throws DatabaseException {
+
+        int rows;
         String sql = "DELETE FROM " + tableName;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.executeUpdate();
+            rows = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DatabaseException(
                 format("Failed to clear(table='%s')", tableName));
         }
+        return rows;
     }
 
 }

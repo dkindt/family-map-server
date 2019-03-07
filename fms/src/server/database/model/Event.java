@@ -1,7 +1,6 @@
 package server.database.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import static shared.util.DatabaseHelper.generateUUID;
 
 /** Represents an Event row in the events table. */
 public class Event {
@@ -17,7 +16,7 @@ public class Event {
     private int year;
 
     public Event() {
-
+        this.id = generateUUID();
     }
 
     public String getUUID() {
@@ -90,5 +89,24 @@ public class Event {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    @Override
+    public Event clone() {
+        try {
+            return (Event) super.clone();
+        } catch (CloneNotSupportedException e) {
+            Event event = new Event();
+            event.setUUID(getUUID());
+            event.setDescendant(getDescendant());
+            event.setPerson(getPerson());
+            event.setLatitude(getLatitude());
+            event.setLongitude(getLongitude());
+            event.setCountry(getCountry());
+            event.setCity(getCity());
+            event.setType(getType());
+            event.setYear(getYear());
+            return event;
+        }
     }
 }

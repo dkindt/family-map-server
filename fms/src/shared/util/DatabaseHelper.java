@@ -1,25 +1,24 @@
 package shared.util;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 public class DatabaseHelper {
 
-    public static String hashPassword(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String hashPassword(String input) throws NoSuchAlgorithmException {
 
         MessageDigest salt = MessageDigest.getInstance("SHA-256");
-        salt.update(input.getBytes("UTF-8"));
-        salt.update(UUID.randomUUID().toString().getBytes("UTF-8"));
+        salt.update(input.getBytes(StandardCharsets.UTF_8));
+        salt.update(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
         return bytesToHex(salt.digest());
 
     }
 
-    public static String generateUUID(String source) throws UnsupportedEncodingException {
-        byte[] bytes = source.getBytes("UTF-8");
-        UUID uuid = UUID.nameUUIDFromBytes(bytes);
-        return uuid.toString();
+    public static String generateUUID() {
+        return UUID.randomUUID().toString();
     }
 
     private static String bytesToHex(byte[] bytes) {

@@ -1,5 +1,7 @@
 package server.database.model;
 
+import static shared.util.DatabaseHelper.generateUUID;
+
 /** Represents a Person row in the persons table. */
 public class Person {
 
@@ -13,7 +15,7 @@ public class Person {
     private String spouse;
 
     public Person() {
-
+        this.uuid = generateUUID();
     }
 
     public String getUUID() {

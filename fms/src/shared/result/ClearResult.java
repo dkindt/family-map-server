@@ -6,7 +6,7 @@ public class ClearResult {
     private String message;
 
     public ClearResult(String message) {
-        this.message = message;
+        setMessage(message);
     }
 
     public String getMessage() {

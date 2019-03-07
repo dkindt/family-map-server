@@ -10,6 +10,12 @@ public class PersonHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+
+            String path = exchange.getRequestURI().getPath();
+
+        }
+
     }
 
 }

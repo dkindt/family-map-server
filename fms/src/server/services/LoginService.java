@@ -1,7 +1,9 @@
 package server.services;
 
 import server.database.Database;
+import server.database.dao.AuthDAO;
 import server.database.dao.UserDAO;
+import server.database.model.AuthToken;
 import server.database.model.User;
 import server.exceptions.DatabaseException;
 import shared.request.LoginRequest;
@@ -12,6 +14,8 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static shared.util.DatabaseHelper.generateUUID;
 
 /** Provides service for logging a User into their account. */
 public class LoginService {
@@ -27,25 +31,36 @@ public class LoginService {
     public LoginResult login(LoginRequest request) throws DatabaseException {
 
         log.entering("LoginService", "login");
-        Database db = new Database();
 
+        Database db = new Database();
         try (Connection connection = db.openConnection()) {
+
+            AuthDAO authDAO = new AuthDAO(connection);
             UserDAO userDAO = new UserDAO(connection);
 
             Map<String, String> params = new LinkedHashMap<>();
             params.put("username", request.getUsername());
             params.put("password", request.getPassword());
-
             User user = userDAO.get(params);
+            if (user == null) {
+                return new LoginResult("username/password incorrect!");
+            }
+            String username = user.getUsername();
+            String personID = user.getPersonID();
 
+            AuthToken authToken = new AuthToken();
+            String token = generateUUID();
+            authToken.setToken(token);
+            authToken.setUsername(username);
+            authDAO.create(authToken);
 
             db.closeConnection(true);
+            return new LoginResult(token, username, personID);
 
         } catch (DatabaseException | SQLException e) {
             e.printStackTrace();
             db.closeConnection(false);
         }
-
         return null;
     }
 

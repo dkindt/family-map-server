@@ -1,16 +1,14 @@
 package server.database;
 
-import server.database.dao.AuthTokenDAO;
+import server.database.dao.AuthDAO;
 import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
 import server.database.dao.UserDAO;
 import server.exceptions.DatabaseException;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
-import static java.lang.String.format;
 import static shared.util.FileHelper.loadFile;
 
 public class Database {
@@ -68,25 +66,28 @@ public class Database {
         }
     }
 
-    public void clearTables() throws DatabaseException {
+    public int clear() throws DatabaseException {
 
         openConnection();
 
-        AuthTokenDAO authTokenDAO = new AuthTokenDAO(connection);
+        AuthDAO authDAO = new AuthDAO(connection);
         EventDAO eventDAO = new EventDAO(connection);
         UserDAO userDAO = new UserDAO(connection);
         PersonDAO personDAO = new PersonDAO(connection);
 
+        int rowsDeleted = 0;
         try {
-            userDAO.clear();
-            personDAO.clear();
-            eventDAO.clear();
-            authTokenDAO.clear();
+            rowsDeleted += userDAO.clear();
+            rowsDeleted += personDAO.clear();
+            rowsDeleted += eventDAO.clear();
+            rowsDeleted += authDAO.clear();
             closeConnection(true);
+
         } catch (DatabaseException e) {
             closeConnection(false);
             throw e;
         }
+        return rowsDeleted;
     }
 
 }

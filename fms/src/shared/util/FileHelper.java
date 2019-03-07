@@ -15,6 +15,7 @@ public class FileHelper {
             try (BufferedReader reader = new BufferedReader(fileReader)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
+                    line += "\n"; // important to preserve the newline character.
                     stringBuilder.append(line);
                 }
             }
