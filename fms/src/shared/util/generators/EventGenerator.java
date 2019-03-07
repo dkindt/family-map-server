@@ -8,19 +8,28 @@ import java.util.List;
 
 public class EventGenerator {
 
-    public static Event createBirth(Person person) {
+    public static List<Event> generateEvents(Person mother, Person father, String root, int year) {
+
+        List<Event> events = new ArrayList<>();
+        events.add(createBirth(mother));
+        events.add(createBirth(father));
+        events.addAll(createMarriage(mother, father, root, year));
+        return events;
+    }
+
+    private static Event createBirth(Person person) {
 
         return new Event();
     }
 
-    public static Event createDeath() {
+    private static Event createDeath() {
 
         return new Event();
     }
 
-    public static List<Event> createMarriage(String descendant, Person mother, Person father, int year) {
+    private static List<Event> createMarriage(Person mother, Person father, String root, int year) {
         Event event = LocationGenerator.generate();
-        event.setDescendant(descendant);
+        event.setDescendant(root);
         event.setType("Marriage");
         event.setYear(year);
         event.setPerson(mother.getUUID());
@@ -34,7 +43,7 @@ public class EventGenerator {
         }};
     }
 
-    public Event createRandom() {
+    private static Event createRandom() {
 
         return new Event();
     }

@@ -9,25 +9,23 @@ import java.util.Random;
 
 public class FamilyTreeGenerator {
 
+    private int year;
     private String root;  // User this FamilyTree belongs to.
     private Random random = new Random();
 
     private List<Person> persons;
     private List<Event> events;
 
-    public FamilyTreeGenerator(Person root) {
+    public FamilyTreeGenerator(Person root, int year) {
 
+        this.year = year;
         this.root = root.getDescendant();
         this.persons = new ArrayList<>() {{
             add(root);
         }};
     }
 
-    public void generateTree(Person child, int generations, int year) {
-
-        // make the Person's parents older than the current Person!
-        // also, ensure that Event's aren't
-        year = generateRandomYear(year);
+    public void generateTree(Person child, int generations) {
 
         Person[] parents = generateParents();
         Person mother = parents[0];
@@ -41,28 +39,23 @@ public class FamilyTreeGenerator {
         //  (1) Birth
         //  (2) Marriage
         //  (3) Random Event (Death, etc.)
-        createEvents(mother, father, year);
+        events.addAll(EventGenerator.generateEvents(mother, father, root, getYear()));
 
         // recursively call this method until the entire tree is built.
         if (generations != 0) {
-            generateTree(mother, generations - 1, year);
-            generateTree(father, generations - 1, year);
+            generateTree(mother, generations - 1);
+            generateTree(father, generations - 1);
         }
 
     }
 
-    private void createEvents(Person mother, Person father, int year) {
+    private int getYear() {
 
-        events.add(EventGenerator.createBirth(mother));
-        events.add(EventGenerator.createBirth(father));
-        events.addAll(EventGenerator.createMarriage(root, mother, father, year));
-    }
-
-    private int generateRandomYear(int year) {
-
+        // make the Person's parents older than the current Person!
         final int bound = 10;
         final int gap = 35;
-        return year - gap - random.nextInt(bound);
+        year = year - gap - random.nextInt(bound);
+        return year;
     }
 
     private Person[] generateParents() {
