@@ -1,9 +1,7 @@
 package server.database.model;
 
-import static java.lang.String.format;
-
 /** Represents an authorization token for a User. A row in the `users` table. */
-public class AuthToken {
+public class AuthToken extends BaseModel {
 
     private String token;
     private String username;
@@ -25,6 +23,15 @@ public class AuthToken {
 
     @Override
     public String toString() {
-        return format("AuthToken(token='%s', username='%s')", token, username);
+        StringBuilder sb = new StringBuilder("\nAuthToken(");
+        sb.append(toStringHelper("token"));
+        sb.append(toStringHelper("username"));
+        sb.append("\n)");
+        String format = sb.toString();
+        return String.format(
+            format,
+            getToken(),
+            getUserName()
+        );
     }
 }

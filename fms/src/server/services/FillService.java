@@ -37,6 +37,7 @@ public class FillService {
      */
     public FillResult fill(String username, int generations) throws DatabaseException {
 
+        boolean insertSuccess;
         FillResult result;
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
@@ -48,11 +49,15 @@ public class FillService {
             FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
             familyTree.create(root, generations);
 
-            eventDAO.insertBulk(familyTree.getEvents());
-            personDAO.insertBulk(familyTree.getPersons());
+            insertSuccess = eventDAO.insertBulk(familyTree.getEvents());
+            insertSuccess = personDAO.insertBulk(familyTree.getPersons());
 
-            result = new FillResult(format("Created: %s Persons; %s Events",
-                familyTree.totalPersons(), familyTree.totalEvents()));
+            if (insertSuccess) {
+                result = new FillResult(format("Created: %s Persons; %s Events",
+                    familyTree.totalPersons(), familyTree.totalEvents()));
+            } else {
+                result = new FillResult("Something went wrong inserting tree!");
+            }
 
             db.closeConnection(true);
 

@@ -42,16 +42,17 @@ public class NameGenerator {
     }
 
     private Names getNames(String fileName) throws FileNotFoundException {
+
         Path path = Paths.get("json", fileName).toAbsolutePath();
         return (Names) readJsonFile(path.toString(), Names.class);
     }
 
     public String generateName(NameType type) {
-        System.out.println(String.format("Attempting to generate %s name", type.toString()));
+
         int idx = random.nextInt(names.get(type).totalNames());
-        String name = names.get(type).get(idx);
-        name = name.substring(1, name.length() - 1);
-        return name;
+        // String name = names.get(type).get(idx);
+        // name = name.substring(1, name.length() - 1);
+        return names.get(type).get(idx);
     }
 
 }

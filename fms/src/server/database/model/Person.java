@@ -3,7 +3,7 @@ package server.database.model;
 import static shared.util.DatabaseHelper.generateUUID;
 
 /** Represents a Person row in the persons table. */
-public class Person {
+public class Person extends BaseModel {
 
     private String uuid;
     private String descendant;
@@ -84,12 +84,27 @@ public class Person {
 
     @Override
     public String toString() {
-        return String.format("Person(uuid='%s')", uuid);
+        StringBuilder sb = new StringBuilder("\nPerson(");
+        sb.append(toStringHelper("uuid"));
+        sb.append(toStringHelper("descendant"));
+        sb.append(toStringHelper("firstName"));
+        sb.append(toStringHelper("lastName"));
+        sb.append(toStringHelper("gender"));
+        sb.append(toStringHelper("father"));
+        sb.append(toStringHelper("mother"));
+        sb.append(toStringHelper("spouse"));
+        sb.append("\n)");
+        String format = sb.toString();
+        return String.format(
+            format,
+            getUUID(),
+            getDescendant(),
+            getFirstName(),
+            getLastName(),
+            getGender(),
+            getFather(),
+            getMother(),
+            getSpouse()
+        );
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
 }

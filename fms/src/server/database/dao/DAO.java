@@ -49,16 +49,18 @@ abstract class DAO<T> {
 
     abstract int getNumColumns();
 
-    //abstract public boolean insert(T model) throws DatabaseException;
-
     abstract void bindParameters(PreparedStatement statement, T model) throws SQLException;
 
     public boolean insertBulk(List<T> items) throws DatabaseException {
 
+        log.entering("DAO", "insertBulk");
+
         String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
+        log.info(sql);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             for (T item : items) {
+                log.info(item.toString());
                 bindParameters(statement, item);
                 statement.addBatch();
             }
@@ -142,7 +144,7 @@ abstract class DAO<T> {
             throw new DatabaseException(
                 format("Failed to get(pk='%s')", pk));
         }
-        return null; // Person with uuid does not exist
+        return null;
     }
 
     public List<T> getAll() throws DatabaseException {
@@ -181,7 +183,7 @@ abstract class DAO<T> {
     public int clear() throws DatabaseException {
 
         int rows;
-        final String sql = format(SQL_DELETE, tableName);
+        final String sql = format(SQL_DELETE_ROWS, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             rows = statement.executeUpdate();
         } catch (SQLException e) {

@@ -10,12 +10,20 @@ public class Locations {
         this.data = data;
     }
 
+    public Location get(int idx) {
+        return data[idx];
+    }
+
+    public int totalLocations() {
+        return data.length;
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(data);
     }
 
-    private static class Location {
+    public static class Location {
 
         private float latitude;
         private float longitude;

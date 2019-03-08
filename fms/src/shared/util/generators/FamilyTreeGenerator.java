@@ -46,7 +46,7 @@ public class FamilyTreeGenerator {
 
         this.root = person.getDescendant();
         persons.add(person);
-        events.add(EventGenerator.createBirth(person, year));
+        events.add(EventGenerator.createBirth(person, person.getDescendant(), year));
         generate(person, generations - 1);
 
     }

@@ -2,7 +2,7 @@ package server.database.model;
 
 
 /** Represents a User row in the users table. */
-public class User {
+public class User extends BaseModel {
 
     private String username;
     private String password; // TODO: should be a hash when set???
@@ -73,8 +73,26 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public String toString() {
+        StringBuilder sb = new StringBuilder("\nUser(");
+        sb.append(toStringHelper("username"));
+        sb.append(toStringHelper("password"));
+        sb.append(toStringHelper("email"));
+        sb.append(toStringHelper("firstName"));
+        sb.append(toStringHelper("lastName"));
+        sb.append(toStringHelper("gender"));
+        sb.append(toStringHelper("personID"));
+        sb.append("\n)");
+        String format = sb.toString();
+        return String.format(
+            format,
+            getUsername(),
+            getPassword(),
+            getEmail(),
+            getFirstName(),
+            getLastName(),
+            getGender(),
+            getPersonID()
+        );
     }
-
 }

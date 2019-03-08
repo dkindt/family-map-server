@@ -25,6 +25,7 @@ public class FillHandler extends BaseHandler implements HttpHandler {
 
         if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 
+            FillResult result;
             int status = 200;
 
             Map<String, String> params = parsePath(exchange.getRequestURI().getPath());
@@ -32,12 +33,13 @@ public class FillHandler extends BaseHandler implements HttpHandler {
             int generations = Integer.parseInt(params.get("generations"));
 
             try {
-
-                FillResult result = new FillService().fill(username, generations);
-                sendResponse(result, exchange, status);
+                result = new FillService().fill(username, generations);
             } catch (Exception e) {
                 e.printStackTrace();
+                result = new FillResult(e.getMessage());
+                status = 500;
             }
+            sendResponse(result, exchange, status);
         }
     }
 

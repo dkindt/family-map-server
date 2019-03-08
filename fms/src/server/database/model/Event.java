@@ -3,7 +3,7 @@ package server.database.model;
 import static shared.util.DatabaseHelper.generateUUID;
 
 /** Represents an Event row in the events table. */
-public class Event {
+public class Event extends BaseModel {
 
     private String id;
     private String descendant;
@@ -108,5 +108,33 @@ public class Event {
             event.setYear(getYear());
             return event;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("\nEvent(");
+        sb.append(toStringHelper("uuid"));
+        sb.append(toStringHelper("descendant"));
+        sb.append(toStringHelper("person"));
+        sb.append(toStringHelper("latitude"));
+        sb.append(toStringHelper("longitude"));
+        sb.append(toStringHelper("country"));
+        sb.append(toStringHelper("city"));
+        sb.append(toStringHelper("type"));
+        sb.append(toStringHelper("year"));
+        sb.append("\n)");
+        String format = sb.toString();
+        return String.format(
+            format,
+            getUUID(),
+            getDescendant(),
+            getPerson(),
+            getLatitude(),
+            getLongitude(),
+            getCountry(),
+            getCity(),
+            getType(),
+            getYear()
+        );
     }
 }
