@@ -31,7 +31,6 @@ public class RegistrationService extends BaseService {
         log.entering("RegistrationService", "register");
 
         Database db = new Database();
-        boolean commit = false;
         try (Connection connection = db.openConnection()) {
 
             UserDAO userDAO = new UserDAO(connection);
@@ -42,16 +41,16 @@ public class RegistrationService extends BaseService {
                 AuthDAO authDAO = new AuthDAO(connection);
                 PersonDAO personDAO = new PersonDAO(connection);
 
-                // create the Person object that will be tied to the new
+                // insert the Person object that will be tied to the new
                 // User and insert it into the database.
                 Person person = new Person();
                 person.setDescendant(request.getUsername());
                 person.setFirstName(request.getFirstName());
                 person.setLastName(request.getLastName());
                 person.setGender(request.getGender());
-                personDAO.create(person);
+                personDAO.insert(person);
 
-                // create the User object and insert into the database.
+                // insert the User object and insert into the database.
                 user = new User();
                 user.setUsername(request.getUsername());
                 user.setPassword(request.getPassword());
@@ -60,14 +59,14 @@ public class RegistrationService extends BaseService {
                 user.setLastName(request.getLastName());
                 user.setGender(request.getGender());
                 user.setPersonID(person.getUUID());
-                userDAO.create(user);
+                userDAO.insert(user);
 
                 // 'login' the User and generate a new AuthToken for them.
                 AuthToken authToken = new AuthToken();
                 String token = generateUUID();
                 authToken.setToken(token);
                 authToken.setUsername(user.getUsername());
-                authDAO.create(authToken);
+                authDAO.insert(authToken);
 
                 db.closeConnection(true);
                 return new RegistrationResult(token, user.getUsername(), person.getUUID());

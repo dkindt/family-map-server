@@ -3,6 +3,7 @@ package server.handlers;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import server.exceptions.DatabaseException;
 import server.services.FillService;
 import shared.request.FillRequest;
 import shared.result.FillResult;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FillHandler implements HttpHandler {
+public class FillHandler extends BaseHandler implements HttpHandler {
 
     public FillHandler() {
 
@@ -24,14 +25,19 @@ public class FillHandler implements HttpHandler {
 
         if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 
-            Headers headers = exchange.getRequestHeaders();
+            int status = 200;
+
             Map<String, String> params = parsePath(exchange.getRequestURI().getPath());
-            System.out.println(params.get("username"));
-            System.out.println(params.get("generations"));
+            String username = params.get("username");
+            int generations = Integer.parseInt(params.get("generations"));
 
-            FillService service = new FillService();
-            FillResult result = service.fill(new FillRequest());
+            try {
 
+                FillResult result = new FillService().fill(username, generations);
+                sendResponse(result, exchange, status);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

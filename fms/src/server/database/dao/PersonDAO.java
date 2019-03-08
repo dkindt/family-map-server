@@ -3,10 +3,12 @@ package server.database.dao;
 import server.database.model.Person;
 import server.exceptions.DatabaseException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.sql.*;
+import java.util.List;
+
+import static java.lang.String.format;
+import static shared.util.FileHelper.loadFile;
 
 public class PersonDAO extends DAO<Person> {
 
@@ -30,29 +32,46 @@ public class PersonDAO extends DAO<Person> {
     }
 
     @Override
-    public boolean create(Person person) throws DatabaseException {
-
-        String sql = String.format("INSERT INTO %s VALUES (?,?,?,?,?,?,?,?)", tableName);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, person.getUUID());
-            statement.setString(2, person.getDescendant());
-            statement.setString(3, person.getFirstName());
-            statement.setString(4, person.getLastName());
-            statement.setString(5, person.getGender());
-            statement.setString(6, person.getFather());
-            statement.setString(7, person.getMother());
-            statement.setString(8, person.getSpouse());
-
-            int rows = statement.executeUpdate();
-            if (rows == 1) return true;
-
-        } catch (SQLException e) {
-
-            e.printStackTrace();
-            throw new DatabaseException(
-                String.format("Failed to create(): %s", person.toString()));
-        }
-        return false;
+    int getNumColumns() {
+        return Person.class.getDeclaredFields().length;
     }
+
+    @Override
+    void bindParameters(PreparedStatement statement, Person person) throws SQLException {
+
+        statement.setString(1, person.getUUID());
+        statement.setString(2, person.getDescendant());
+        statement.setString(3, person.getFirstName());
+        statement.setString(4, person.getLastName());
+        statement.setString(5, person.getGender());
+        statement.setString(6, person.getFather());
+        statement.setString(7, person.getMother());
+        statement.setString(8, person.getSpouse());
+    }
+
+    public Person getFromUsername(String username) throws DatabaseException {
+
+        try {
+
+            final String sql = loadFile("sql/person_from_username.sql");
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+                statement.setString(1, username);
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    return modelFactory(resultSet);
+                }
+
+            } catch (SQLException e) {
+                throw new DatabaseException(
+                    format("Failed to get Person w/username='%s'", username));
+            }
+
+        } catch (IOException e) {
+            log.severe(e.getMessage());
+            throw new DatabaseException("Failed to load SQL file!");
+        }
+        return null;
+    }
+
 }

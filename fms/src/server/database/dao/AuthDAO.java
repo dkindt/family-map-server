@@ -25,19 +25,32 @@ public class AuthDAO extends DAO<AuthToken> {
     }
 
     @Override
-    public boolean create(AuthToken authToken) throws DatabaseException {
-        String sql = format("INSERT INTO %s VALUES (?,?)", tableName);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, authToken.getToken());
-            statement.setString(2, authToken.getUserName());
-
-            int rows = statement.executeUpdate();
-            if (rows == 1) return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseException(format("Failed to insert %s", authToken.toString()));
-        }
-        return false;
+    int getNumColumns() {
+        return AuthToken.class.getDeclaredFields().length;
     }
+
+    @Override
+    void bindParameters(PreparedStatement statement, AuthToken model) throws SQLException {
+
+        statement.setString(1, model.getToken());
+        statement.setString(2, model.getUserName());
+    }
+//
+//    @Override
+//    public boolean insert(AuthToken authToken) throws DatabaseException {
+//        String sql = format("INSERT INTO %s VALUES (?,?)", tableName);
+//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//
+//            statement.setString(1, authToken.getToken());
+//            statement.setString(2, authToken.getUserName());
+//
+//            int rows = statement.executeUpdate();
+//            if (rows == 1) return true;
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseException(format("Failed to insert %s", authToken.toString()));
+//        }
+//        return false;
+//    }
 }

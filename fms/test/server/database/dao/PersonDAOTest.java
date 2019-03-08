@@ -55,7 +55,7 @@ public class PersonDAOTest {
         boolean commit = false;
         try {
             PersonDAO personDAO = new PersonDAO(connection);
-            created = personDAO.create(person);
+            created = personDAO.insert(person);
             commit = true;
         } catch (DatabaseException e) {
             e.printStackTrace();
@@ -72,8 +72,8 @@ public class PersonDAOTest {
         try {
             Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
-            personDAO.create(person);
-            personDAO.create(person);
+            personDAO.insert(person);
+            personDAO.insert(person);
             database.closeConnection(true);
         } catch (DatabaseException e) {
             database.closeConnection(false);
@@ -102,7 +102,7 @@ public class PersonDAOTest {
         try {
             Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
-            personDAO.create(person);
+            personDAO.insert(person);
             Person p = personDAO.get(expectedUUID);
             actualUUID = p.getUUID();
             commit = true;
@@ -138,7 +138,7 @@ public class PersonDAOTest {
         try {
             Connection connection = database.openConnection();
             PersonDAO personDAO = new PersonDAO(connection);
-            personDAO.create(person);
+            personDAO.insert(person);
             deleted = personDAO.delete("test-uuid");
             commit = true;
         } finally {

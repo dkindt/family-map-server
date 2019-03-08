@@ -60,8 +60,8 @@ public class Server {
 
         try {
             // Create a new HttpServer object.
-            // Rather than calling "new" directly, we instead create
-            // the object by calling the HttpServer.create static factory method.
+            // Rather than calling "new" directly, we instead insert
+            // the object by calling the HttpServer.insert static factory method.
             // Just like "new", this method returns a reference to the new object.
             String hostname = "localhost";
             server = HttpServer.create(

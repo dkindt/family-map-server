@@ -52,7 +52,7 @@ public class LoginService {
             String token = generateUUID();
             authToken.setToken(token);
             authToken.setUsername(username);
-            authDAO.create(authToken);
+            authDAO.insert(authToken);
 
             db.closeConnection(true);
             return new LoginResult(token, username, personID);

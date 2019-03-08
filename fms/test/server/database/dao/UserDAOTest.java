@@ -5,17 +5,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import server.database.Database;
-import server.database.model.Person;
 import server.database.model.User;
 import server.exceptions.DatabaseException;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -63,7 +59,7 @@ public class UserDAOTest {
         boolean commit = false;
         try {
             UserDAO userDAO = new UserDAO(connection);
-            created = userDAO.create(user);
+            created = userDAO.insert(user);
             commit = true;
         } catch (DatabaseException e) {
             e.printStackTrace();
@@ -81,8 +77,8 @@ public class UserDAOTest {
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.create(user);
-            created = userDAO.create(user);
+            userDAO.insert(user);
+            created = userDAO.insert(user);
         } catch(DatabaseException e) {
             created = false;
         } finally {
@@ -103,7 +99,7 @@ public class UserDAOTest {
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.create(user);
+            userDAO.insert(user);
             User u = userDAO.get(params);
             actualUsername = u.getUsername();
             commit = true;
@@ -122,7 +118,7 @@ public class UserDAOTest {
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.create(user);
+            userDAO.insert(user);
             User u = userDAO.get(expectedUsername);
             actualUsername = u.getUsername();
             commit = true;
@@ -159,7 +155,7 @@ public class UserDAOTest {
         try {
             Connection connection = database.openConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.create(user);
+            userDAO.insert(user);
             deleted = userDAO.delete("_test_uuid");
             commit = true;
         } finally {

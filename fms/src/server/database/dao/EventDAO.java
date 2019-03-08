@@ -4,6 +4,7 @@ import server.database.model.Event;
 import server.exceptions.DatabaseException;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -29,7 +30,21 @@ public class EventDAO extends DAO<Event> {
     }
 
     @Override
-    public boolean create(Event model) throws DatabaseException {
-        return false;
+    int getNumColumns() {
+        return Event.class.getDeclaredFields().length;
+    }
+
+    @Override
+    void bindParameters(PreparedStatement statement, Event event) throws SQLException {
+
+        statement.setString(1, event.getUUID());
+        statement.setString(2, event.getDescendant());
+        statement.setString(3, event.getPerson());
+        statement.setFloat(4, event.getLatitude());
+        statement.setFloat(5, event.getLongitude());
+        statement.setString(6, event.getCountry());
+        statement.setString(7, event.getCity());
+        statement.setString(8, event.getType());
+        statement.setInt(9, event.getYear());
     }
 }

@@ -10,6 +10,14 @@ public class Names {
         this.data = data;
     }
 
+    public String get(int idx) {
+        return data[idx];
+    }
+
+    public int totalNames() {
+        return data.length;
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(data);

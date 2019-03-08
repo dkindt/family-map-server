@@ -29,26 +29,43 @@ public class UserDAO extends DAO<User> {
     }
 
     @Override
-    public boolean create(User user) throws DatabaseException {
-
-        String sql = String.format("INSERT INTO %s VALUES (?,?,?,?,?,?,?)", tableName);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPassword());
-            statement.setString(3, user.getEmail());
-            statement.setString(4, user.getFirstName());
-            statement.setString(5, user.getLastName());
-            statement.setString(6, user.getGender());
-            statement.setString(7, user.getPersonID());
-
-            int rows = statement.executeUpdate();
-            if (rows == 1) return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseException("Failed to create new User!");
-        }
-        return false;
+    int getNumColumns() {
+        return User.class.getDeclaredFields().length;
     }
+
+    @Override
+    void bindParameters(PreparedStatement statement, User user) throws SQLException {
+
+        statement.setString(1, user.getUsername());
+        statement.setString(2, user.getPassword());
+        statement.setString(3, user.getEmail());
+        statement.setString(4, user.getFirstName());
+        statement.setString(5, user.getLastName());
+        statement.setString(6, user.getGender());
+        statement.setString(7, user.getPersonID());
+    }
+//
+//    @Override
+//    public boolean insert(User user) throws DatabaseException {
+//
+//        String sql = String.format("INSERT INTO %s VALUES (?,?,?,?,?,?,?)", tableName);
+//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//
+//            statement.setString(1, user.getUsername());
+//            statement.setString(2, user.getPassword());
+//            statement.setString(3, user.getEmail());
+//            statement.setString(4, user.getFirstName());
+//            statement.setString(5, user.getLastName());
+//            statement.setString(6, user.getGender());
+//            statement.setString(7, user.getPersonID());
+//
+//            int rows = statement.executeUpdate();
+//            if (rows == 1) return true;
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseException("Failed to insert new User!");
+//        }
+//        return false;
+//    }
 }

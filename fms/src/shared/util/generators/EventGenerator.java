@@ -11,23 +11,23 @@ public class EventGenerator {
     public static List<Event> generateEvents(Person mother, Person father, String root, int year) {
 
         List<Event> events = new ArrayList<>();
-        events.add(createBirth(mother));
-        events.add(createBirth(father));
+        events.add(createBirth(mother, year));
+        events.add(createBirth(father, year));
         events.addAll(createMarriage(mother, father, root, year));
         return events;
     }
 
-    private static Event createBirth(Person person) {
+    public static Event createBirth(Person person, int year) {
 
         return new Event();
     }
 
-    private static Event createDeath() {
+    public static Event createDeath(int year) {
 
         return new Event();
     }
 
-    private static List<Event> createMarriage(Person mother, Person father, String root, int year) {
+    public static List<Event> createMarriage(Person mother, Person father, String root, int year) {
         Event event = LocationGenerator.generate();
         event.setDescendant(root);
         event.setType("Marriage");
