@@ -1,7 +1,6 @@
 package server.database.dao;
 
 import server.database.model.User;
-import server.exceptions.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,28 +43,4 @@ public class UserDAO extends DAO<User> {
         statement.setString(6, user.getGender());
         statement.setString(7, user.getPersonID());
     }
-//
-//    @Override
-//    public boolean insert(User user) throws DatabaseException {
-//
-//        String sql = String.format("INSERT INTO %s VALUES (?,?,?,?,?,?,?)", tableName);
-//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-//
-//            statement.setString(1, user.getUsername());
-//            statement.setString(2, user.getPassword());
-//            statement.setString(3, user.getEmail());
-//            statement.setString(4, user.getFirstName());
-//            statement.setString(5, user.getLastName());
-//            statement.setString(6, user.getGender());
-//            statement.setString(7, user.getPersonID());
-//
-//            int rows = statement.executeUpdate();
-//            if (rows == 1) return true;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            throw new DatabaseException("Failed to insert new User!");
-//        }
-//        return false;
-//    }
 }

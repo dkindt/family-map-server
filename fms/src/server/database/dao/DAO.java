@@ -51,33 +51,30 @@ abstract class DAO<T> {
 
     abstract void bindParameters(PreparedStatement statement, T model) throws SQLException;
 
-    public boolean insertBulk(List<T> items) throws DatabaseException {
+    public int insertBulk(List<T> items) throws DatabaseException {
 
         log.entering("DAO", "insertBulk");
 
         String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
-        log.info(sql);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             for (T item : items) {
-                log.info(item.toString());
                 bindParameters(statement, item);
                 statement.addBatch();
             }
 
             int[] rows = statement.executeBatch();
-            if (rows.length > 0) return true;
+            if (rows.length > 0) return rows.length;
 
         } catch (SQLException e) {
-
-            e.printStackTrace();
-            throw new DatabaseException(
-                format("Failed to insertBulk() %s items", items.size()));
+            throw new DatabaseException("Failed to insertBulk", e);
         }
-        return false;
+        return 0;
     }
 
     public boolean insert(T model) throws DatabaseException {
+
+        log.entering("DAO", "insert");
 
         String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -88,14 +85,15 @@ abstract class DAO<T> {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
             throw new DatabaseException(
-                format("Failed to insert(): %s", model.toString()));
+                format("Failed to insert(): %s", model.toString()), e);
         }
         return false;
     }
 
     public T get(Map<String, String> fields) throws DatabaseException {
+
+        log.entering("DAO", "get");
 
         String sql = format(
           "SELECT * FROM %s WHERE %s", tableName,
@@ -105,8 +103,6 @@ abstract class DAO<T> {
                 .map(s -> format("%s=?", s))
                 .toArray(String[]::new))
         );
-
-        log.info(format("PreparedStatement='%s'", sql));
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -122,59 +118,69 @@ abstract class DAO<T> {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseException("Failed to get() with params!");
+
+            throw new DatabaseException("Failed to get() with params!", e);
         }
         return null;
     }
 
     public T get(String pk) throws DatabaseException {
 
+        log.entering("DAO", "get");
+
         String sql = format(SQL_SELECT, tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            // prepare SQL query against SQL-injection.
+
             statement.setString(1, pk);
-            // execute the query, build, and return the Person object
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return modelFactory(resultSet);
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+
             throw new DatabaseException(
-                format("Failed to get(pk='%s')", pk));
+                format("Failed to get(pk='%s')", pk), e);
         }
         return null;
     }
 
     public List<T> getAll() throws DatabaseException {
 
+        log.entering("DAO", "getAll");
+
         List<T> results = new ArrayList<>();
         String sql = format(SQL_SELECT_ALL, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, tableName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 results.add(modelFactory(resultSet));
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseException("Failed to getAll()");
+
+            throw new DatabaseException("Failed to getAll()", e);
         }
         return results;
     }
 
     public boolean delete(String id) throws DatabaseException {
 
+        log.entering("DAO", "delete");
+
         String sql = format(SQL_DELETE, tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, id);
             int rows = statement.executeUpdate();
             if (rows == 1) return true;
+
         } catch (SQLException e) {
-            e.printStackTrace();
+
             throw new DatabaseException(
-                format("Failed to delete(id='%s')", id));
+                format("Failed to delete(id='%s')", id), e);
         }
         return false;
     }
@@ -182,14 +188,17 @@ abstract class DAO<T> {
 
     public int clear() throws DatabaseException {
 
+        log.entering("DAO", "clear");
+
         int rows;
         final String sql = format(SQL_DELETE_ROWS, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             rows = statement.executeUpdate();
+
         } catch (SQLException e) {
-            e.printStackTrace();
+
             throw new DatabaseException(
-                format("Failed to clear(table='%s')", tableName));
+                format("Failed to clear(table='%s')", tableName), e);
         }
         return rows;
     }

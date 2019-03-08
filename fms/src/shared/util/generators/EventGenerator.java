@@ -33,7 +33,7 @@ public class EventGenerator {
         return events;
     }
 
-    public static Event createBirth(Person person, String root, int year) {
+    static Event createBirth(Person person, String root, int year) {
 
         Event birthEvent = LocationGenerator.generate();
         int yob = year - random.nextInt(10);
@@ -46,7 +46,7 @@ public class EventGenerator {
         return birthEvent;
     }
 
-    public static Event createDeath(Person person, String root, int year) {
+    private static Event createDeath(Person person, String root, int year) {
 
         final int currYear = LocalDate.now().getYear();
         final int avgLifeExpectancy = 40;
@@ -65,7 +65,7 @@ public class EventGenerator {
         return deathEvent;
     }
 
-    public static List<Event> createMarriage(Person mother, Person father, String root, int year) {
+    private static List<Event> createMarriage(Person mother, Person father, String root, int year) {
         Event event = LocationGenerator.generate();
         event.setDescendant(root);
         event.setType("Marriage");
@@ -82,7 +82,7 @@ public class EventGenerator {
         }};
     }
 
-    public static Event createRandom(Person person, String root, int year) {
+    private static Event createRandom(Person person, String root, int year) {
 
         int bound = 10;
         int eventYear = year + bound + random.nextInt(15);

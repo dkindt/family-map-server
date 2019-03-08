@@ -64,12 +64,12 @@ public class PersonDAO extends DAO<Person> {
 
             } catch (SQLException e) {
                 throw new DatabaseException(
-                    format("Failed to get Person w/username='%s'", username));
+                    format("Failed to get Person w/username='%s'", username), e);
             }
 
         } catch (IOException e) {
-            log.severe(e.getMessage());
-            throw new DatabaseException("Failed to load SQL file!");
+
+            throw new DatabaseException("Failed to load SQL file!", e);
         }
         return null;
     }

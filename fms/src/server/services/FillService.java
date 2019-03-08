@@ -3,27 +3,18 @@ package server.services;
 import server.database.Database;
 import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
-import server.database.dao.UserDAO;
-import server.database.model.Locations;
-import server.database.model.Names;
 import server.database.model.Person;
 import server.exceptions.DatabaseException;
-import shared.request.FillRequest;
 import shared.result.FillResult;
 import shared.util.generators.FamilyTreeGenerator;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static java.lang.String.format;
 
 /** Provides service for seeding database with data for a specific User. */
-public class FillService {
+public class FillService extends BaseService {
 
     PersonDAO personDAO;
     EventDAO eventDAO;
@@ -37,8 +28,9 @@ public class FillService {
      */
     public FillResult fill(String username, int generations) throws DatabaseException {
 
-        boolean insertSuccess;
-        FillResult result;
+        int eventsAdded;
+        int personsAdded;
+        String respMessage;
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
 
@@ -49,24 +41,19 @@ public class FillService {
             FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
             familyTree.create(root, generations);
 
-            insertSuccess = eventDAO.insertBulk(familyTree.getEvents());
-            insertSuccess = personDAO.insertBulk(familyTree.getPersons());
-
-            if (insertSuccess) {
-                result = new FillResult(format("Created: %s Persons; %s Events",
-                    familyTree.totalPersons(), familyTree.totalEvents()));
-            } else {
-                result = new FillResult("Something went wrong inserting tree!");
-            }
+            eventsAdded = eventDAO.insertBulk(familyTree.getEvents());
+            personsAdded = personDAO.insertBulk(familyTree.getPersons());
+            respMessage = format("%s Events added; %s Persons added", eventsAdded, personsAdded);
 
             db.closeConnection(true);
 
         } catch (DatabaseException | SQLException e) {
-            e.printStackTrace();
+
+            log.severe("DatabaseException occurred!" + e);
             db.closeConnection(false);
-            result = new FillResult(e.getMessage());
+            respMessage = e.getMessage();
         }
-        return result;
+        return new FillResult(respMessage);
     }
 
 }

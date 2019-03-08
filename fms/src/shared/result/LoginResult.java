@@ -1,19 +1,18 @@
 package shared.result;
 
 /** Represents the response data to be returned to the LoginService.  */
-public class LoginResult {
+public class LoginResult extends BaseResult {
 
     private String authToken;
     private String username;
     private String personID;
-    private String message;
 
     public LoginResult(String message) {
-        this.message = message;
+        super(message);
     }
 
     public LoginResult() {
-
+        super();
     }
 
     public LoginResult(String authToken, String username, String personID) {
