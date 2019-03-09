@@ -1,12 +1,11 @@
 package shared.result;
 
 /** Represents the result to be returned to the RegistrationService.  */
-public class RegistrationResult {
+public class RegistrationResult extends BaseResult {
 
     private String authToken;
     private String username;
     private String personID;
-    private String message;
 
     public RegistrationResult(String message) {
         setMessage(message);
@@ -47,13 +46,5 @@ public class RegistrationResult {
 
     public void setPersonID(String personID) {
         this.personID = personID;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

@@ -29,7 +29,9 @@ abstract class DAO<T> {
     protected String tableName;
     protected String primaryKeyName;
 
-    public DAO() {}
+    public DAO() {
+    }
+
     public DAO(Connection connection, String tableName, String primaryKeyName) {
 
         this.connection = connection;
@@ -55,6 +57,7 @@ abstract class DAO<T> {
 
         log.entering("DAO", "insertBulk");
 
+        int added;
         String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -64,12 +67,12 @@ abstract class DAO<T> {
             }
 
             int[] rows = statement.executeBatch();
-            if (rows.length > 0) return rows.length;
+            added = rows.length;
 
         } catch (SQLException e) {
             throw new DatabaseException("Failed to insertBulk", e);
         }
-        return 0;
+        return added;
     }
 
     public boolean insert(T model) throws DatabaseException {
@@ -96,12 +99,12 @@ abstract class DAO<T> {
         log.entering("DAO", "get");
 
         String sql = format(
-          "SELECT * FROM %s WHERE %s", tableName,
-          String.join(" AND ",
-              fields.keySet()
-                .stream()
-                .map(s -> format("%s=?", s))
-                .toArray(String[]::new))
+            "SELECT * FROM %s WHERE %s", tableName,
+            String.join(" AND ",
+                fields.keySet()
+                    .stream()
+                    .map(s -> format("%s=?", s))
+                    .toArray(String[]::new))
         );
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -119,7 +122,7 @@ abstract class DAO<T> {
 
         } catch (SQLException e) {
 
-            throw new DatabaseException("Failed to get() with params!", e);
+            throw new DatabaseException("Failed in DAO.get()", e);
         }
         return null;
     }
@@ -139,8 +142,7 @@ abstract class DAO<T> {
 
         } catch (SQLException e) {
 
-            throw new DatabaseException(
-                format("Failed to get(pk='%s')", pk), e);
+            throw new DatabaseException("Failed in DAO.get()");
         }
         return null;
     }
@@ -191,7 +193,7 @@ abstract class DAO<T> {
         log.entering("DAO", "clear");
 
         int rows;
-        final String sql = format(SQL_DELETE_ROWS, tableName);
+        String sql = format(SQL_DELETE_ROWS, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             rows = statement.executeUpdate();
 
@@ -202,5 +204,4 @@ abstract class DAO<T> {
         }
         return rows;
     }
-
 }

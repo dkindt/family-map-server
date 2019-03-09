@@ -69,7 +69,7 @@ public class PersonDAO extends DAO<Person> {
 
         } catch (IOException e) {
 
-            throw new DatabaseException("Failed to load SQL file!", e);
+            throw new DatabaseException("Failed to load SQL file!");
         }
         return null;
     }

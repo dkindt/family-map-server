@@ -1,59 +1,80 @@
 package server.handlers;
 
 import com.google.gson.Gson;
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import server.handlers.AuthenticationException.ErrorCode;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.EnumMap;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 import static shared.util.FileHelper.inputStreamToString;
 
 abstract class BaseHandler {
 
-    // TODO: this needs to be updated in concrete classes.
-    protected String supportedMethod;
-    protected static Logger log = Logger.getLogger("family-map-server");
+    boolean authRequired = false;
+    String supportedMethod;
+    static Logger log = Logger.getLogger("family-map-server");
 
-    public enum HTTP_STATUS {
-        INVALID_REQUEST_METHOD,
-        INTERNAL_SERVER_ERROR,
-        SUCCESS,
+    BaseHandler() {}
+
+    void sendJSONResponse(Object result, HttpExchange exchange, int status) throws IOException {
+
+        sendStringResponse(exchange, serialize(result), status);
     }
 
-    protected EnumMap<HTTP_STATUS, Integer> statusCodes = new EnumMap<>(HTTP_STATUS.class);
+    void sendStringResponse(HttpExchange exchange, String data, int status) throws IOException {
 
-    public BaseHandler() {}
+        sendResponse(
+            exchange,
+            new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)),
+            status
+            );
+    }
 
-    protected void sendResponse(Object result, HttpExchange exchange, int code) throws IOException {
+    void sendResponse(HttpExchange exchange, InputStream input, int status) throws IOException {
 
-        exchange.sendResponseHeaders(code, 0);
+        Headers headers = exchange.getResponseHeaders();
+        headers.add("Server", "CS240 Family Map");
+        exchange.sendResponseHeaders(status, 0);
+
+        final int offset = 0;
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+
         OutputStream body = exchange.getResponseBody();
-        OutputStreamWriter writer = new OutputStreamWriter(body);
-        writer.write(serialize(result));
-        writer.flush();
-        exchange.close();
+        while((bytesRead = input.read(buffer)) > offset) {
+            body.write(buffer, offset, bytesRead);
+        }
 
+        exchange.close();
     }
 
-    protected Object deserialize(InputStream input, Class klass) throws IOException {
+    Object deserialize(InputStream input, Class klass) throws IOException {
         return new Gson().fromJson(
-            // TODO: is this the best way to handle it?
             inputStreamToString(input).replace("userName", "username"),
             klass
         );
     }
 
-    protected String serialize(Object o) {
+    private String serialize(Object o) {
         return new Gson().toJson(o, o.getClass());
     }
 
-    protected boolean isValidRequestMethod(HttpExchange exchange) {
-        final String HTTP_METHOD = "POST";
-        return exchange.getRequestMethod().equalsIgnoreCase(HTTP_METHOD);
+    boolean isValidRequestMethod(HttpExchange exchange) {
+        return exchange.getRequestMethod().equalsIgnoreCase(supportedMethod);
     }
 
+    void verifyAuthentication(HttpExchange exchange) throws AuthenticationException {
+
+        Headers headers = exchange.getRequestHeaders();
+        if (!headers.containsKey("Authorization")) {
+            throw new AuthenticationException(ErrorCode.MissingAuthToken);
+        }
+    }
+
+    boolean isAuthRequired() {
+        return authRequired;
+    }
 }

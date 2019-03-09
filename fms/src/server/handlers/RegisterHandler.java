@@ -2,6 +2,7 @@ package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import server.exceptions.DatabaseException;
 import server.services.RegistrationService;
 import shared.request.RegistrationRequest;
 import shared.result.RegistrationResult;
@@ -11,23 +12,28 @@ import java.io.IOException;
 public class RegisterHandler extends BaseHandler implements HttpHandler {
 
     public RegisterHandler() {
-
+        this.supportedMethod = "POST";
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
         int status = 200;
-        RegistrationResult result;
-        if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        RegistrationResult result = null;
+        if (isValidRequestMethod(exchange)) {
 
-            RegistrationRequest request = (RegistrationRequest) deserialize(
-                exchange.getRequestBody(), RegistrationRequest.class
-            );
-            result = new RegistrationService().register(request);
-            sendResponse(result, exchange, status);
+            try {
+                RegistrationRequest request = (RegistrationRequest) deserialize(
+                    exchange.getRequestBody(), RegistrationRequest.class
+                );
+                result = new RegistrationService().register(request);
+            } catch (DatabaseException e) {
 
+                log.severe(e.getMessage());
+                result = new RegistrationResult(e.getMessage());
+                status = 500;
+            }
         }
-
+        sendJSONResponse(result, exchange, status);
     }
 }

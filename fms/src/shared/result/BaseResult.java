@@ -13,6 +13,11 @@ abstract class BaseResult {
         this.message = message;
     }
 
+    BaseResult(String message, boolean success) {
+        this.message = message;
+        this.success = success;
+    }
+
     public boolean isSuccess() {
         return success;
     }

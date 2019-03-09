@@ -10,7 +10,7 @@ import java.io.IOException;
 public class ClearHandler extends BaseHandler implements HttpHandler {
 
     public ClearHandler() {
-
+        this.supportedMethod = "POST";
     }
 
     @Override
@@ -18,7 +18,7 @@ public class ClearHandler extends BaseHandler implements HttpHandler {
 
         int status = 200;
         ClearResult result;
-        if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        if (isValidRequestMethod(exchange)) {
 
             ClearService service = new ClearService();
             result = service.clear();
@@ -27,6 +27,6 @@ public class ClearHandler extends BaseHandler implements HttpHandler {
             status = 405;
             result = new ClearResult("Invalid method for clear()!");
         }
-        sendResponse(result, exchange, status);
+        sendJSONResponse(result, exchange, status);
     }
 }

@@ -3,7 +3,9 @@ package server.services;
 import server.database.Database;
 import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
+import server.database.dao.UserDAO;
 import server.database.model.Person;
+import server.database.model.User;
 import server.exceptions.DatabaseException;
 import shared.result.FillResult;
 import shared.util.generators.FamilyTreeGenerator;
@@ -16,9 +18,6 @@ import static java.lang.String.format;
 /** Provides service for seeding database with data for a specific User. */
 public class FillService extends BaseService {
 
-    PersonDAO personDAO;
-    EventDAO eventDAO;
-
     /**
      * Fills a User's pedigree from the FillRequest body.
      *
@@ -28,32 +27,40 @@ public class FillService extends BaseService {
      */
     public FillResult fill(String username, int generations) throws DatabaseException {
 
-        int eventsAdded;
-        int personsAdded;
+        log.entering("FillService", "fill");
+
+        boolean success = false;
         String respMessage;
+
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
 
-            eventDAO = new EventDAO(connection);
-            personDAO = new PersonDAO(connection);
+            UserDAO userDAO = new UserDAO(connection);
+            userDAO.clearUserData(username);
 
-            Person root = personDAO.getFromUsername(username);
+            User user = userDAO.get(username);
+            Person root = Person.fromUser(user);
+
             FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
             familyTree.create(root, generations);
+            int rows = familyTree.save(connection);
 
-            eventsAdded = eventDAO.insertBulk(familyTree.getEvents());
-            personsAdded = personDAO.insertBulk(familyTree.getPersons());
-            respMessage = format("%s Events added; %s Persons added", eventsAdded, personsAdded);
+            success = true;
+            respMessage = format("Family Tree successfully added! %s total rows inserted", rows);
 
             db.closeConnection(true);
 
-        } catch (DatabaseException | SQLException e) {
+        } catch (SQLException e) {
 
-            log.severe("DatabaseException occurred!" + e);
+            throw new DatabaseException("Unable to create Connection to Database.");
+
+        } catch (DatabaseException e) {
+
+            log.severe(e.getMessage());
             db.closeConnection(false);
             respMessage = e.getMessage();
-        }
-        return new FillResult(respMessage);
-    }
 
+        }
+        return new FillResult(respMessage, success);
+    }
 }

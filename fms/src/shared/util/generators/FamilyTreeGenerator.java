@@ -1,10 +1,13 @@
 package shared.util.generators;
 
+import server.database.dao.EventDAO;
+import server.database.dao.PersonDAO;
 import server.database.model.Event;
 import server.database.model.Person;
+import server.exceptions.DatabaseException;
 import shared.util.generators.NameGenerator.NameType;
 
-import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -12,8 +15,9 @@ import java.util.Random;
 import static shared.util.generators.EventGenerator.generateEvents;
 import static shared.util.generators.NameGenerator.NameType.*;
 
-public class FamilyTreeGenerator {
+public class FamilyTreeGenerator extends BaseGenerator {
 
+    private int DEFAULT_NUM_GENERATIONS = 4;
     private int year = 1999;
     private String root;  // User this FamilyTree belongs to.
 
@@ -26,27 +30,34 @@ public class FamilyTreeGenerator {
     private Random random = new Random();
     private NameGenerator nameGenerator = new NameGenerator();
 
-    public int totalPersons() {
-        return persons.size();
+    public int save(Connection connection) throws DatabaseException {
+
+        int rows = 0;
+        EventDAO eventDAO = new EventDAO(connection);
+        PersonDAO personDAO = new PersonDAO(connection);
+
+        log.info("Adding Event objects to Database");
+        rows += eventDAO.insertBulk(events);
+
+        log.info("Adding Person objects to Database");
+        rows += personDAO.insertBulk(persons);
+
+        return rows;
     }
 
-    public List<Person> getPersons() {
-        return persons;
-    }
+    public void create(Person person) {
 
-    public int totalEvents() {
-        return events.size();
-    }
-
-    public List<Event> getEvents() {
-        return events;
+        create(person, DEFAULT_NUM_GENERATIONS);
     }
 
     public void create(Person person, int generations) {
 
+        log.entering("FamilyTreeGenerator", "create", "Generating Family Tree");
         this.root = person.getDescendant();
         persons.add(person);
         events.add(EventGenerator.createBirth(person, person.getDescendant(), year));
+        events.add(EventGenerator.createRandom(person, year));
+        events.add(EventGenerator.createRandom(person, year));
         generate(person, generations - 1);
 
     }

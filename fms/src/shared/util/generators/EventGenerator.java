@@ -82,6 +82,11 @@ public class EventGenerator {
         }};
     }
 
+    public static Event createRandom(Person person, int year) {
+
+        return createRandom(person, person.getDescendant(), year);
+    }
+
     private static Event createRandom(Person person, String root, int year) {
 
         int bound = 10;

@@ -6,4 +6,7 @@ abstract class BaseService {
 
     protected static Logger log = Logger.getLogger("family-map-server");
 
+    public BaseService() {
+
+    }
 }

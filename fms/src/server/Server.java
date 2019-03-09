@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import server.database.Database;
 import server.exceptions.DatabaseException;
 import server.handlers.*;
+import server.handlers.FileHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -37,7 +38,7 @@ public class Server {
         consoleHandler.setFormatter(new SimpleFormatter());
         log.addHandler(consoleHandler);
 
-        FileHandler fileHandler = new FileHandler("fms.log", false);
+        java.util.logging.FileHandler fileHandler = new java.util.logging.FileHandler("fms.log", false);
         fileHandler.setLevel(logLevel);
         fileHandler.setFormatter(new SimpleFormatter());
         log.addHandler(fileHandler);
@@ -82,7 +83,7 @@ public class Server {
         // forwards the request to the handler for that URL path.
         // TL;DR this sets up our server's `routes`
         log.info("Creating contexts");
-        server.createContext("/", new DefaultHandler());
+        server.createContext("/", new FileHandler());
         server.createContext("/user/login", new LoginHandler());
         server.createContext("/user/register", new RegisterHandler());
         server.createContext("/clear/", new ClearHandler());

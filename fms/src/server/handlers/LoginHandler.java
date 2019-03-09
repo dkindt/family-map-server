@@ -11,6 +11,10 @@ import java.io.IOException;
 
 public class LoginHandler extends BaseHandler implements HttpHandler {
 
+    public LoginHandler() {
+        this.supportedMethod = "POST";
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -23,13 +27,14 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
                     exchange.getRequestBody(), LoginRequest.class
                 );
                 result = new LoginService().login(request);
-                sendResponse(result, exchange, status);
+                sendJSONResponse(result, exchange, status);
             } catch (DatabaseException e) {
-                e.printStackTrace();
+
+                log.severe(e.getMessage());
             }
 
         } else {
-            log.severe("Unsupported method");
+            log.warning("Unsupported method");
         }
     }
 

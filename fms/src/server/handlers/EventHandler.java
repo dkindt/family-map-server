@@ -5,10 +5,11 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class EventHandler implements HttpHandler {
+public class EventHandler extends BaseHandler implements HttpHandler {
 
     public EventHandler() {
-
+        this.supportedMethod = "GET";
+        this.authRequired = true;
     }
 
     @Override

@@ -9,8 +9,4 @@ public class EventResult extends BaseResult {
     public EventResult(Event[] data) {
         this.data = data;
     }
-
-    public EventResult(String message) {
-        super(message);
-    }
 }

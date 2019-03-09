@@ -1,11 +1,9 @@
 package server.handlers;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import server.exceptions.DatabaseException;
 import server.services.FillService;
-import shared.request.FillRequest;
 import shared.result.FillResult;
 
 import java.io.IOException;
@@ -16,15 +14,20 @@ import java.util.regex.Pattern;
 
 public class FillHandler extends BaseHandler implements HttpHandler {
 
-    public FillHandler() {
+    private static final int DEFAULT_NUM_GENERATIONS = 4;
 
+    public FillHandler() {
+        this.supportedMethod = "POST";
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        log.entering("FillHandler", "handle");
 
+        if (isValidRequestMethod(exchange)) {
+
+            boolean success = false;
             FillResult result;
             int status = 200;
 
@@ -34,24 +37,33 @@ public class FillHandler extends BaseHandler implements HttpHandler {
 
             try {
                 result = new FillService().fill(username, generations);
-            } catch (Exception e) {
-                e.printStackTrace();
+                success = true;
+            } catch (DatabaseException e) {
                 result = new FillResult(e.getMessage());
                 status = 500;
             }
-            sendResponse(result, exchange, status);
+            result.setSuccess(success);
+            sendJSONResponse(result, exchange, status);
         }
     }
 
     private Map<String, String> parsePath(String path) {
 
-        final String pattern = "(?i)^/fill/(?<username>[^/]+)(?:/(?<generations>[0-9]+))?$";
+        log.entering("FillHandler", "parsePath");
+
+        final String pattern = "(?i)^/fill/(?<username>[^/]+/*)(?:(?<generations>[0-9]+))?$";
         Pattern regex = Pattern.compile(pattern);
         Matcher matcher = regex.matcher(path);
         boolean matches = matcher.find();
-        return new HashMap<>(){{
-            put("username", matcher.group("username"));
-            put("generations", matcher.group("generations"));
-        }};
+
+        String generations = matcher.group("generations");
+        if (generations == null) {
+            generations = String.valueOf(DEFAULT_NUM_GENERATIONS);
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("username", matcher.group("username"));
+        params.put("generations", generations);
+        return params;
     }
 }

@@ -18,6 +18,16 @@ public class Person extends BaseModel {
         this.uuid = generateUUID();
     }
 
+    public static Person fromUser(User user) {
+        Person person = new Person();
+        person.setUUID(user.getPersonID());
+        person.setDescendant(user.getUsername());
+        person.setFirstName(user.getFirstName());
+        person.setLastName(user.getLastName());
+        person.setGender(user.getGender());
+        return person;
+    }
+
     public String getUUID() {
         return uuid;
     }

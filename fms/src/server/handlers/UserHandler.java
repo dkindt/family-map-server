@@ -5,10 +5,10 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class UserHandler implements HttpHandler {
+public class UserHandler extends BaseHandler implements HttpHandler {
 
     public UserHandler() {
-
+        this.supportedMethod = "";
     }
 
     @Override

@@ -6,4 +6,8 @@ public class FillResult extends BaseResult {
     public FillResult(String message) {
         super(message);
     }
+
+    public FillResult(String message, boolean success) {
+        super(message, success);
+    }
 }
