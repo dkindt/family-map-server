@@ -49,12 +49,11 @@ public class RegistrationService extends BaseService {
 
             if (user == null) {
 
-                log.info("Creating new User");
+                log.info("Registering new User");
                 AuthDAO authDAO = new AuthDAO(connection);
 
                 // insert the Person object that will be tied to the new
                 // User and insert it into the WHEN we generate the Family Tree.
-                log.info("Creating Person for new User");
                 Person person = new Person();
                 person.setDescendant(request.getUsername());
                 person.setFirstName(request.getFirstName());
@@ -62,7 +61,6 @@ public class RegistrationService extends BaseService {
                 person.setGender(request.getGender());
 
                 // insert the User object and insert into the database.
-                log.info("Adding new User to the Database");
                 user = new User();
                 user.setUsername(request.getUsername());
                 user.setPassword(request.getPassword());
@@ -73,13 +71,13 @@ public class RegistrationService extends BaseService {
                 user.setPersonID(person.getUUID());
                 userDAO.insert(user);
 
-                log.info("Building Events and Family for new User");
+                log.info("Building Family Tree for User");
                 FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
                 familyTree.create(person);
                 familyTree.save(connection);
 
                 // 'login' the User and generate a new AuthToken for them.
-                log.info("Creating new AuthToken for User");
+                log.info("Generating AuthToken for User");
                 AuthToken authToken = new AuthToken();
                 String token = generateUUID();
                 authToken.setToken(token);
@@ -92,7 +90,6 @@ public class RegistrationService extends BaseService {
             } else {
                 result = new RegistrationResult("username already taken!");
             }
-            db.closeConnection(true);
 
         } catch (DatabaseException | SQLException e) {
 
