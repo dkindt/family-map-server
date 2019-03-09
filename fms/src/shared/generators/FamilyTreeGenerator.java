@@ -1,19 +1,19 @@
-package shared.util.generators;
+package shared.generators;
 
 import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
 import server.database.model.Event;
 import server.database.model.Person;
 import server.exceptions.DatabaseException;
-import shared.util.generators.NameGenerator.NameType;
+import shared.generators.NameGenerator.NameType;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static shared.util.generators.EventGenerator.generateEvents;
-import static shared.util.generators.NameGenerator.NameType.*;
+import static shared.generators.EventGenerator.generateEvents;
+import static shared.generators.NameGenerator.NameType.*;
 
 public class FamilyTreeGenerator extends BaseGenerator {
 
@@ -45,12 +45,12 @@ public class FamilyTreeGenerator extends BaseGenerator {
         return rows;
     }
 
-    public void create(Person person) {
+    public void generateFamilyTree(Person person) {
 
-        create(person, DEFAULT_NUM_GENERATIONS);
+        generateFamilyTree(person, DEFAULT_NUM_GENERATIONS);
     }
 
-    public void create(Person person, int generations) {
+    public void generateFamilyTree(Person person, int generations) {
 
         log.entering("FamilyTreeGenerator", "create", "Generating Family Tree");
         this.root = person.getDescendant();
@@ -58,11 +58,11 @@ public class FamilyTreeGenerator extends BaseGenerator {
         events.add(EventGenerator.createBirth(person, person.getDescendant(), year));
         events.add(EventGenerator.createRandom(person, year));
         events.add(EventGenerator.createRandom(person, year));
-        generate(person, generations - 1);
+        generateHelper(person, generations - 1);
 
     }
 
-    private void generate(Person child, int generations) {
+    private void generateHelper(Person child, int generations) {
 
         Person[] parents = generateParents(child);
         Person mother = parents[0];
@@ -81,8 +81,8 @@ public class FamilyTreeGenerator extends BaseGenerator {
 
         // recursively call this method until the entire tree is built.
         if (generations != 0) {
-            generate(mother, generations - 1);
-            generate(father, generations - 1);
+            generateHelper(mother, generations - 1);
+            generateHelper(father, generations - 1);
         }
 
     }

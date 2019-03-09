@@ -1,11 +1,10 @@
-package shared.util.generators;
+package shared.generators;
 
 import server.database.model.Event;
 import server.database.model.Locations;
 import server.database.model.Locations.Location;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;

@@ -1,14 +1,12 @@
 package server.services;
 
 import server.database.Database;
-import server.database.dao.EventDAO;
-import server.database.dao.PersonDAO;
 import server.database.dao.UserDAO;
 import server.database.model.Person;
 import server.database.model.User;
 import server.exceptions.DatabaseException;
 import shared.result.FillResult;
-import shared.util.generators.FamilyTreeGenerator;
+import shared.generators.FamilyTreeGenerator;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,7 +40,7 @@ public class FillService extends BaseService {
             Person root = Person.fromUser(user);
 
             FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
-            familyTree.create(root, generations);
+            familyTree.generateFamilyTree(root, generations);
             int rows = familyTree.save(connection);
 
             success = true;

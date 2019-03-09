@@ -1,4 +1,4 @@
-package shared.util.generators;
+package shared.generators;
 
 import server.database.model.Event;
 import server.database.model.Person;

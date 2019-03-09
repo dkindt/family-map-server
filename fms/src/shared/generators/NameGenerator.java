@@ -1,8 +1,7 @@
-package shared.util.generators;
+package shared.generators;
 
 import server.database.model.Names;
 
-import javax.naming.Name;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;

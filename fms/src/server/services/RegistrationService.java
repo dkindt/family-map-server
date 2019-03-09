@@ -9,7 +9,7 @@ import server.database.model.User;
 import server.exceptions.DatabaseException;
 import shared.request.RegistrationRequest;
 import shared.result.RegistrationResult;
-import shared.util.generators.FamilyTreeGenerator;
+import shared.generators.FamilyTreeGenerator;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -73,7 +73,7 @@ public class RegistrationService extends BaseService {
 
                 log.info("Building Family Tree for User");
                 FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
-                familyTree.create(person);
+                familyTree.generateFamilyTree(person);
                 familyTree.save(connection);
 
                 // 'login' the User and generate a new AuthToken for them.

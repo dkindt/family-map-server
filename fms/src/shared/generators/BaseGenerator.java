@@ -1,4 +1,4 @@
-package shared.util.generators;
+package shared.generators;
 
 import java.util.logging.Logger;
 
