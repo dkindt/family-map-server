@@ -27,7 +27,6 @@ public class FillService extends BaseService {
 
         log.entering("FillService", "fill");
 
-        boolean success = false;
         String respMessage;
 
         Database db = new Database();
@@ -43,7 +42,6 @@ public class FillService extends BaseService {
             familyTree.generateFamilyTree(root, generations);
             int rows = familyTree.save(connection);
 
-            success = true;
             respMessage = format("Family Tree successfully added! %s total rows inserted", rows);
 
             db.closeConnection(true);
@@ -59,6 +57,6 @@ public class FillService extends BaseService {
             respMessage = e.getMessage();
 
         }
-        return new FillResult(respMessage, success);
+        return new FillResult(respMessage);
     }
 }

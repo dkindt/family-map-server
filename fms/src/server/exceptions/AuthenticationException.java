@@ -1,8 +1,8 @@
-package server.handlers;
+package server.exceptions;
 
 public class AuthenticationException extends Exception {
 
-    enum ErrorCode {
+    public enum ErrorCode {
         InvalidAuthToken,
         MissingAuthToken
     }

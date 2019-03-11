@@ -14,6 +14,17 @@ public class ClearHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
+    boolean authorizationRequired() {
+        return false;
+    }
+
+    @Override
+    String getURLPattern() {
+        final String pattern = "";
+        return pattern;
+    }
+
+    @Override
     public void handle(HttpExchange exchange) throws IOException {
 
         int status = 200;

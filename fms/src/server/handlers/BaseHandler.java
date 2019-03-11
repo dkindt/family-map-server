@@ -3,13 +3,16 @@ package server.handlers;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import server.handlers.AuthenticationException.ErrorCode;
+import server.exceptions.AuthenticationException;
+import server.services.AuthService;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static shared.util.FileHelper.inputStreamToString;
+import static shared.util.RegexHelper.search;
 
 abstract class BaseHandler {
 
@@ -18,6 +21,9 @@ abstract class BaseHandler {
     static Logger log = Logger.getLogger("family-map-server");
 
     BaseHandler() {}
+
+    abstract boolean authorizationRequired();
+    abstract String getURLPattern();
 
     void sendJSONResponse(Object result, HttpExchange exchange, int status) throws IOException {
 
@@ -47,7 +53,6 @@ abstract class BaseHandler {
         while((bytesRead = input.read(buffer)) > offset) {
             body.write(buffer, offset, bytesRead);
         }
-
         exchange.close();
     }
 
@@ -66,15 +71,38 @@ abstract class BaseHandler {
         return exchange.getRequestMethod().equalsIgnoreCase(supportedMethod);
     }
 
-    void verifyAuthentication(HttpExchange exchange) throws AuthenticationException {
+    Map<String, String> getURLParams(HttpExchange exchange) throws AuthenticationException {
 
-        Headers headers = exchange.getRequestHeaders();
-        if (!headers.containsKey("Authorization")) {
-            throw new AuthenticationException(ErrorCode.MissingAuthToken);
+        log.entering("Handler", "getURLParams");
+        Map<String, String> params = parseURL(exchange);
+        if (authorizationRequired()) {
+            Headers headers = exchange.getRequestHeaders();
+            String token = headers.getFirst("Authorization");
+            checkAuthorization(token, params.get("username"));
+        }
+        return params;
+    }
+
+    private Map<String, String> parseURL(HttpExchange exchange) {
+
+        log.entering("Handler", "parseURL");
+        try {
+            return search(getURLPattern(), exchange.getRequestURI().getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    boolean isAuthRequired() {
-        return authRequired;
+    private void checkAuthorization(String token, String username) throws AuthenticationException {
+
+        if (token == null) {
+            throw new AuthenticationException(
+                AuthenticationException.ErrorCode.MissingAuthToken);
+        }
+        if (!AuthService.verifyAuthentication(token, username)) {
+            throw new AuthenticationException(
+                AuthenticationException.ErrorCode.InvalidAuthToken);
+        }
     }
 }

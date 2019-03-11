@@ -6,6 +6,7 @@ import server.exceptions.DatabaseException;
 import server.services.LoginService;
 import shared.request.LoginRequest;
 import shared.result.LoginResult;
+import shared.result.RegistrationResult;
 
 import java.io.IOException;
 
@@ -16,10 +17,20 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
+    boolean authorizationRequired() {
+        return false;
+    }
+
+    @Override
+    String getURLPattern() {
+        return "(?i)^/user/login";
+    }
+
+    @Override
     public void handle(HttpExchange exchange) throws IOException {
 
         int status = 200;
-        LoginResult result;
+        LoginResult result = null;
         if (isValidRequestMethod(exchange)) {
 
             try {
@@ -27,15 +38,15 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
                     exchange.getRequestBody(), LoginRequest.class
                 );
                 result = new LoginService().login(request);
-                sendJSONResponse(result, exchange, status);
+
             } catch (DatabaseException e) {
 
                 log.severe(e.getMessage());
+                result = new LoginResult(e.getMessage());
+                status = 500;
             }
-
-        } else {
-            log.warning("Unsupported method");
         }
+        sendJSONResponse(result, exchange, status);
     }
 
 }

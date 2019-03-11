@@ -27,6 +27,17 @@ public class FileHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
+    boolean authorizationRequired() {
+        return false;
+    }
+
+    @Override
+    String getURLPattern() {
+        final String pattern = "";
+        return pattern;
+    }
+
+    @Override
     public void handle(HttpExchange exchange) throws IOException {
 
         /// 1. Retrieve the request URL from the HttpExchange

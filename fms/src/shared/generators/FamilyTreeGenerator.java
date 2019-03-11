@@ -68,10 +68,6 @@ public class FamilyTreeGenerator extends BaseGenerator {
         Person mother = parents[0];
         Person father = parents[1];
 
-        // insert a relationship between the parents and the child.
-        child.setMother(mother.getUUID());
-        child.setFather(father.getUUID());
-
         // insert all of the events for the mom and the dad
         events.addAll(generateEvents(mother, father, root, getYear()));
 
@@ -84,7 +80,6 @@ public class FamilyTreeGenerator extends BaseGenerator {
             generateHelper(mother, generations - 1);
             generateHelper(father, generations - 1);
         }
-
     }
 
     private Person[] generateParents(Person child) {
@@ -95,9 +90,13 @@ public class FamilyTreeGenerator extends BaseGenerator {
         // verify the child's gender, because this will confirm the lastName
         // of the father. In this case, if the child is male, we are assuming
         // that the child shares the same last name and shouldn't use a random one.
-        if (child.getGender().equals("m")) {
+        if (child.getGender().equals("m") || child.getSpouse() != null) {
             father.setLastName(child.getLastName());
         }
+
+        // insert a relationship between the parents and the child.
+        child.setMother(mother.getUUID());
+        child.setFather(father.getUUID());
 
         // Link the two Person objects using each other's spouseID
         mother.setSpouse(father.getUUID());
