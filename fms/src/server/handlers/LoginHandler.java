@@ -6,7 +6,6 @@ import server.exceptions.DatabaseException;
 import server.services.LoginService;
 import shared.request.LoginRequest;
 import shared.result.LoginResult;
-import shared.result.RegistrationResult;
 
 import java.io.IOException;
 
@@ -23,7 +22,7 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
 
     @Override
     String getURLPattern() {
-        return "(?i)^/user/login";
+        return "(?i)^/user/login/*$";
     }
 
     @Override
