@@ -42,7 +42,7 @@ public class NameGenerator {
 
     private Names getNames(String fileName) throws FileNotFoundException {
 
-        Path path = Paths.get("json", fileName).toAbsolutePath();
+        Path path = Paths.get("data/json", fileName).toAbsolutePath();
         return (Names) readJsonFile(path.toString(), Names.class);
     }
 

@@ -15,11 +15,6 @@ public class UserHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    boolean authorizationRequired() {
-        return false;
-    }
-
-    @Override
     String getURLPattern() {
         return "(?i)^/user(?:/(?<action>(?:login|register))/*)?$";
     }
@@ -27,23 +22,20 @@ public class UserHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        log.entering("UserHandler", "handle");
+
         if (isValidRequestMethod(exchange)) {
 
-            try {
-                Map<String, String> params = getURLParams(exchange);
-                String action = params.get("actions");
-                switch (action) {
-                    case "login":
-                        RegistrationRequest request = (RegistrationRequest) deserialize(
-                            exchange.getRequestBody(), RegistrationRequest.class
-                        );
+            Map<String, String> params = getURLParams(exchange);
+            String action = params.get("actions");
+            switch (action) {
+                case "login":
+                    RegistrationRequest request = (RegistrationRequest) deserialize(
+                        exchange.getRequestBody(), RegistrationRequest.class
+                    );
 
-                    case "register":
-                        return;
-                }
-            } catch (AuthenticationException e) {
-                log.severe(e.getMessage());
-                e.printStackTrace();
+                case "register":
+                    return;
             }
 
         }

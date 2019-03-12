@@ -16,17 +16,14 @@ public class RegisterHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    boolean authorizationRequired() {
-        return false;
-    }
-
-    @Override
     String getURLPattern() {
         return "(?i)^/user/register$";
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
+        log.entering("RegisterHandler", "handle");
 
         int status = 200;
         RegistrationResult result = null;

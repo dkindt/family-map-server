@@ -2,7 +2,6 @@ package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import server.exceptions.AuthenticationException;
 import server.exceptions.DatabaseException;
 import server.services.FillService;
 import shared.result.FillResult;
@@ -10,18 +9,13 @@ import shared.result.FillResult;
 import java.io.IOException;
 import java.util.Map;
 
+import static shared.generators.FamilyTreeGenerator.DEFAULT_GENERATIONS;
+
 
 public class FillHandler extends BaseHandler implements HttpHandler {
 
-    private static final int DEFAULT_NUM_GENERATIONS = 4;
-
     public FillHandler() {
         this.supportedMethod = "POST";
-    }
-
-    @Override
-    boolean authorizationRequired() {
-        return false;
     }
 
     @Override
@@ -49,7 +43,7 @@ public class FillHandler extends BaseHandler implements HttpHandler {
                     generations = Integer.parseInt(gens);
                 }
                 if (generations <= 0) {
-                    generations = DEFAULT_NUM_GENERATIONS;
+                    generations = DEFAULT_GENERATIONS;
                 }
 
                 result = new FillService().fill(username, generations);
@@ -57,9 +51,6 @@ public class FillHandler extends BaseHandler implements HttpHandler {
             } catch (DatabaseException e) {
                 result = new FillResult(e.getMessage());
                 status = 500;
-            } catch (AuthenticationException e) {
-                result = new FillResult(e.getMessage());
-                status = 401;
             }
             sendJSONResponse(result, exchange, status);
         }

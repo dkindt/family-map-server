@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 import static shared.util.DatabaseHelper.generateUUID;
 
+
 /** Provides service for registering a new User. */
 public class RegistrationService extends BaseService {
 

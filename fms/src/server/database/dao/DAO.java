@@ -1,5 +1,6 @@
 package server.database.dao;
 
+import server.database.model.Person;
 import server.exceptions.DatabaseException;
 
 import java.sql.*;
@@ -68,6 +69,8 @@ abstract class DAO<T> {
 
             int[] rows = statement.executeBatch();
             added = rows.length;
+            connection.commit();
+            log.info(format("%s rows inserted into `%s`", added, tableName));
 
         } catch (SQLException e) {
             throw new DatabaseException("Failed to insertBulk", e);
@@ -84,6 +87,7 @@ abstract class DAO<T> {
 
             bindParameters(statement, model);
             int rows = statement.executeUpdate();
+            connection.commit();
             if (rows == 1) return true;
 
         } catch (SQLException e) {
@@ -117,6 +121,7 @@ abstract class DAO<T> {
             // execute the query, build, and return the Person object
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                connection.commit();
                 return modelFactory(resultSet);
             }
 
@@ -137,6 +142,7 @@ abstract class DAO<T> {
             statement.setString(1, pk);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                connection.commit();
                 return modelFactory(resultSet);
             }
 
@@ -146,6 +152,18 @@ abstract class DAO<T> {
         }
         return null;
     }
+
+//    public T[] getAll(String token) {
+//
+//        log.entering("DAO", format("getAll(token='%s')", token));
+//
+//        List<T> results = new ArrayList<>();
+//        String sql = format(
+//            "SELECT * FROM %s WHERE (SELECT username FROM auth WHERE token = ?)",
+//            tableName
+//        );
+//
+//    }
 
     public List<T> getAll() throws DatabaseException {
 
@@ -160,6 +178,7 @@ abstract class DAO<T> {
             while (resultSet.next()) {
                 results.add(modelFactory(resultSet));
             }
+            connection.commit();
 
         } catch (SQLException e) {
 

@@ -2,8 +2,14 @@ package server.exceptions;
 
 public class InvalidParameterException extends Exception {
 
-    public InvalidParameterException(String reason) {
-        super(reason);
+    private String parameter;
+
+    public InvalidParameterException(String message, String parameter) {
+        super(message);
+        this.parameter = parameter;
     }
 
+    public String getParameter() {
+        return parameter;
+    }
 }

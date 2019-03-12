@@ -7,7 +7,18 @@ public class PersonResult extends BaseResult {
 
     private Person[] data;
 
+    public PersonResult() {
+        super();
+    }
+    public PersonResult(String message) {
+        super(message);
+    }
     public PersonResult(Person[] data) {
         this.data = data;
     }
+
+    public void setData(Person[] data) {
+        this.data = data;
+    }
+    public Person[] getData() { return this.data; }
 }

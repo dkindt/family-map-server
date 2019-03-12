@@ -12,7 +12,18 @@ import static shared.util.DatabaseHelper.generateUUID;
 
 public class EventGenerator {
 
+    final public static int CURRENT_YEAR = LocalDate.now().getYear();
+    final private static int DEFAULT_BOUND = 10;
+    final private static int MARRIAGE_AGE = 24;
+    final private static int GENERATIONAL_GAP = 30;
+    final private static int AVG_LIFE_EXPECTANCY = 72;
+
     private static Random random = new Random();
+
+
+    public static int calcBirthYear(int year) {
+        return year - GENERATIONAL_GAP;
+    }
 
     public static List<Event> generateEvents(Person mother, Person father, String root, int year) {
 
@@ -29,47 +40,38 @@ public class EventGenerator {
             events.add(createRandom(mother, root, year));
             events.add(createRandom(father, root, year));
         }
-
         return events;
     }
 
-    static Event createBirth(Person person, String root, int year) {
+    static Event createBirth(Person person, String root, int yearOfBirth) {
 
-        Event birthEvent = LocationGenerator.generate();
-        int yob = year - random.nextInt(10);
+        Event event = LocationGenerator.generate();
+        event.setType("Birth");
+        event.setYear(yearOfBirth);
+        event.setPerson(person.getUUID());
+        event.setDescendant(root);
 
-        birthEvent.setType("Birth");
-        birthEvent.setYear(yob);
-        birthEvent.setPerson(person.getUUID());
-        birthEvent.setDescendant(root);
-
-        return birthEvent;
+        return event;
     }
 
     private static Event createDeath(Person person, String root, int year) {
 
-        final int currYear = LocalDate.now().getYear();
-        final int avgLifeExpectancy = 40;
-        final int bound = 50;
-        int yod = year + avgLifeExpectancy + random.nextInt(bound);
-
         Event deathEvent = LocationGenerator.generate();
-
-        if (yod > currYear) yod = 2018;
 
         deathEvent.setType("Death");
         deathEvent.setPerson(person.getUUID());
         deathEvent.setDescendant(root);
-        deathEvent.setYear(yod);
+        deathEvent.setYear(calcDeathYear(year));
 
         return deathEvent;
     }
 
     private static List<Event> createMarriage(Person mother, Person father, String root, int year) {
+
         Event event = LocationGenerator.generate();
         event.setDescendant(root);
         event.setType("Marriage");
-        event.setYear(year);
+        event.setYear(calcMarriageYear(year));
         event.setPerson(mother.getUUID());
 
         Event eventCopy = event.clone();
@@ -89,16 +91,14 @@ public class EventGenerator {
 
     private static Event createRandom(Person person, String root, int year) {
 
-        int bound = 10;
-        int eventYear = year + bound + random.nextInt(15);
+        int yearOfEvent = calcRandomYear(year, DEFAULT_BOUND);
+        Event event = LocationGenerator.generate();
+        event.setType(getRandomType());
+        event.setYear(yearOfEvent);
+        event.setPerson(person.getUUID());
+        event.setDescendant(root);
 
-        Event randomEvent = LocationGenerator.generate();
-        randomEvent.setType(getRandomType());
-        randomEvent.setYear(eventYear);
-        randomEvent.setPerson(person.getUUID());
-        randomEvent.setDescendant(root);
-
-        return randomEvent;
+        return event;
     }
 
     private static String getRandomType() {
@@ -109,11 +109,30 @@ public class EventGenerator {
             "Graduated College",
             "Lost Wallet",
             "Found Wallet",
-            "Upgraded to Macbook Pro"
+            "Upgraded to MacBook Pro"
         };
 
         final int idx = random.nextInt(types.length);
         return types[idx];
+    }
+
+    private static int calcRandomYear(int year, int bound) {
+
+        int x = random.nextInt();
+        int y = random.nextInt();
+        return year + bound * (x / y);
+    }
+
+    private static int calcDeathYear(int yearOfBirth) {
+
+        int yod = yearOfBirth + AVG_LIFE_EXPECTANCY;
+        return (yod > CURRENT_YEAR) ? CURRENT_YEAR : yod;
+    }
+
+    private static int calcMarriageYear(int year) {
+
+        final int bound = 10;
+        return (year + MARRIAGE_AGE + bound * ((random.nextInt() + bound) % bound));
     }
 
 }

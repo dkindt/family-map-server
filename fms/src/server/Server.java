@@ -27,19 +27,19 @@ public class Server {
 
     private static void initLog() throws IOException {
 
-        Level logLevel = Level.FINEST;
+        Level level = Level.FINEST;
 
         log = Logger.getLogger("family-map-server");
-        log.setLevel(logLevel);
+        log.setLevel(level);
         log.setUseParentHandlers(false);
 
         Handler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(logLevel);
+        consoleHandler.setLevel(level);
         consoleHandler.setFormatter(new SimpleFormatter());
         log.addHandler(consoleHandler);
 
         java.util.logging.FileHandler fileHandler = new java.util.logging.FileHandler("fms.log", false);
-        fileHandler.setLevel(logLevel);
+        fileHandler.setLevel(level);
         fileHandler.setFormatter(new SimpleFormatter());
         log.addHandler(fileHandler);
     }

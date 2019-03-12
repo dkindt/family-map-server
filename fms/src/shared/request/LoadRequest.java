@@ -3,9 +3,10 @@ package shared.request;
 import server.database.model.Event;
 import server.database.model.Person;
 import server.database.model.User;
+import server.exceptions.InvalidParameterException;
 
 /** Represents the HTTP request for the LoadService. */
-public class LoadRequest {
+public class LoadRequest extends BaseRequest {
 
     private User[] users;
     private Person[] persons;
@@ -45,5 +46,12 @@ public class LoadRequest {
 
     public void setEvents(Event[] events) {
         this.events = events;
+    }
+
+    @Override
+    public void verify() throws InvalidParameterException {
+        if (users == null) throw new InvalidParameterException("missing", "users");
+        if (persons == null) throw new InvalidParameterException("missing", "persons");
+        if (events == null) throw new InvalidParameterException("missing", "events");
     }
 }

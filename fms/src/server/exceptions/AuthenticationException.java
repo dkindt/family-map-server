@@ -2,20 +2,10 @@ package server.exceptions;
 
 public class AuthenticationException extends Exception {
 
-    public enum ErrorCode {
-        InvalidAuthToken,
-        MissingAuthToken
+    public AuthenticationException() {
+        super("Verify that you are logged in and/or your auth token");
     }
-
-    private ErrorCode code;
-
-    public AuthenticationException(String reason, ErrorCode code) {
+    public AuthenticationException(String reason) {
         super(reason);
-        this.code = code;
-    }
-
-    public AuthenticationException(ErrorCode code) {
-        super();
-        this.code = code;
     }
 }

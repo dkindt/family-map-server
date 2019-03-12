@@ -9,12 +9,6 @@ public class EventHandler extends BaseHandler implements HttpHandler {
 
     public EventHandler() {
         this.supportedMethod = "GET";
-        this.authRequired = true;
-    }
-
-    @Override
-    boolean authorizationRequired() {
-        return false;
     }
 
     @Override
@@ -25,6 +19,8 @@ public class EventHandler extends BaseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
+        log.entering("EventHandler", "handle");
 
     }
 }

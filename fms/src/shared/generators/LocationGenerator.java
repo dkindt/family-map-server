@@ -18,7 +18,7 @@ public class LocationGenerator {
         Event event = null;
         try {
             final Random random = new Random();
-            final Path path = Paths.get("json", "locations.json");
+            final Path path = Paths.get("data/json", "locations.json");
             final Locations locations = (Locations) readJsonFile(
                 path.toString(), Locations.class);
 

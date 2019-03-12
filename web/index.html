@@ -208,7 +208,7 @@
 					<li>
 						<a href="javascript:load()">/load</a> This API will load the server&apos;s database with
 						data provided by json text in the response body. The json text must contain an array of users as
-						defined in the register details in addition to a personID, an array of persons, and an array of events.
+						defined in the register details in addition to a person, an array of persons, and an array of events.
 						WARNING: all data from the database is wiped when this is called. The json file will be specified in
 						the body of the request. A example.json file is provided to get you started with loading specific data.
 						No authorization token is required.
@@ -275,7 +275,7 @@
 							Authorization token is required.
 						</li>
 						<li>
-							<a href="javascript:getSinglePerson()" >/person/[personID]</a> This API will return
+							<a href="javascript:getSinglePerson()" >/person/[person]</a> This API will return
 							the single person with the specified ID. The person must be related to the user associated
 							with the authorization token. The returned JSON contains the requested person object.
 							Authorization token is required.

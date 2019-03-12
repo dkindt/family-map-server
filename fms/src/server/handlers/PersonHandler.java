@@ -2,11 +2,15 @@ package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import server.database.model.Person;
 import server.exceptions.AuthenticationException;
+import server.exceptions.DatabaseException;
+import server.services.PersonService;
+import shared.result.PersonResult;
 
 import java.io.IOException;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 public class PersonHandler extends BaseHandler implements HttpHandler {
 
@@ -15,28 +19,47 @@ public class PersonHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    boolean authorizationRequired() {
-        return true;
-    }
-
-    @Override
     String getURLPattern() {
-        return "";
+        return "(?i)^/person(?:/+(?<person>.+))?$";
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        log.entering("PersonHandler", "handle");
+
+        int status = 200;
+        PersonResult result;
         if (isValidRequestMethod(exchange)) {
 
             try {
 
+                String token = getAuthorization(exchange);
+                if (token == null || token.isEmpty()) {
+                    throw new AuthenticationException();
+                }
+
                 Map<String, String> params = getURLParams(exchange);
+                String personID = params.get("person");
+
+                PersonService service = new PersonService();
+                if (personID == null) result = service.getAllPersons(token);
+                else result = service.getPerson(personID, token);
 
             } catch (AuthenticationException e) {
 
-                e.printStackTrace();
+                log.severe(e.getMessage());
+                result = new PersonResult(e.getMessage());
+                status = 401;
+
+            } catch (DatabaseException e) {
+
+                log.severe(e.getMessage());
+                result = new PersonResult(format("Internal error: %s", e.getMessage()));
+                status = 500;
+
             }
+            sendJSONResponse(result, exchange, status);
         }
     }
 }

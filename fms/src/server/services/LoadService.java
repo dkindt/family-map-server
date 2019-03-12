@@ -5,9 +5,12 @@ import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
 import server.database.dao.UserDAO;
 import server.exceptions.DatabaseException;
+import server.exceptions.InvalidParameterException;
 import shared.request.LoadRequest;
 import shared.result.LoadResult;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -24,14 +27,16 @@ public class LoadService extends BaseService {
      * @param request payload containing lists of user, person, and event objects.
      * @return LoadResult object with message success/error message(s).
      */
-    public LoadResult load(LoadRequest request) {
+    public LoadResult load(LoadRequest request) throws InvalidParameterException {
+
+        log.entering("LoadService", "load");
 
         String message;
         LoadResult result = new LoadResult();
-        // check to make sure all of the request params were passed in (not null).
-        // instantiate the DAOs
+        Database db = new Database();
+
         try {
-            Database db = new Database();
+            request.verify();
             try (Connection connection = db.openConnection()) {
 
                 UserDAO userDAO = new UserDAO(connection);
@@ -42,8 +47,11 @@ public class LoadService extends BaseService {
                 int persons = personDAO.insertBulk(Arrays.asList(request.getPersons()));
                 int events = eventDAO.insertBulk(Arrays.asList(request.getEvents()));
 
-                String msg = "Successfully added %s users, %s persons, and %s events";
-                message = format(msg, users, persons, events);
+                message = format(
+                    "Successfully added %d users, %d persons, and %d events",
+                    users, persons, events
+                );
+                connection.commit();
 
             } catch (SQLException e) {
                 throw new DatabaseException(
@@ -56,5 +64,4 @@ public class LoadService extends BaseService {
         result.setMessage(message);
         return result;
     }
-
 }

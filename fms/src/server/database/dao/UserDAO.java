@@ -1,5 +1,6 @@
 package server.database.dao;
 
+import server.database.Database;
 import server.database.model.User;
 import server.exceptions.DatabaseException;
 
@@ -65,6 +66,7 @@ public class UserDAO extends DAO<User> {
 
             rows += stmtPerson.executeUpdate();
             rows += stmtEvent.executeUpdate();
+
             log.info(format("Cleared %s rows of data for '%s'", rows, username));
 
         } catch (SQLException e) {

@@ -27,11 +27,6 @@ public class FileHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    boolean authorizationRequired() {
-        return false;
-    }
-
-    @Override
     String getURLPattern() {
         final String pattern = "";
         return pattern;
@@ -40,6 +35,7 @@ public class FileHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        log.entering("FileHandler", "handle");
         /// 1. Retrieve the request URL from the HttpExchange
         //	2. Translate the request URL path to a physical file path on your server
         //	3. Open the requested file, and return its contents in the HTTP

@@ -16,17 +16,14 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    boolean authorizationRequired() {
-        return false;
-    }
-
-    @Override
     String getURLPattern() {
         return "(?i)^/user/login/*$";
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
+        log.entering("LoginHandler", "handle");
 
         int status = 200;
         LoginResult result = null;

@@ -38,12 +38,4 @@ public class AuthDAO extends DAO<AuthToken> {
         statement.setString(1, model.getToken());
         statement.setString(2, model.getUserName());
     }
-
-    public boolean verify(String token, String username) throws DatabaseException {
-
-        Map<String, String> params = new LinkedHashMap<>();
-        params.put("token", token);
-        params.put("username", username);
-        return get(params) != null;
-    }
 }

@@ -1,5 +1,7 @@
 package server.database.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import static shared.util.DatabaseHelper.generateUUID;
 
 /** Represents an Event row in the events table. */
@@ -7,11 +9,15 @@ public class Event extends BaseModel {
 
     private String id;
     private String descendant;
+
+    @SerializedName("personID")
     private String person;
     private float latitude;
     private float longitude;
     private String country;
     private String city;
+
+    @SerializedName("eventType")
     private String type;
     private int year;
 

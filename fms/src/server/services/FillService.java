@@ -40,9 +40,10 @@ public class FillService extends BaseService {
 
             FamilyTreeGenerator familyTree = new FamilyTreeGenerator();
             familyTree.generateFamilyTree(root, generations);
-            int rows = familyTree.save(connection);
+            familyTree.save(connection);
 
-            respMessage = format("Family Tree successfully added! %s total rows inserted", rows);
+            respMessage = format("Successfully added %s persons and %s events",
+                familyTree.getPersonsAdded(), familyTree.getEventsAdded());
 
             db.closeConnection(true);
 

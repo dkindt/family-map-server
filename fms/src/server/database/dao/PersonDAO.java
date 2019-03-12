@@ -1,11 +1,11 @@
 package server.database.dao;
 
 import server.database.model.Person;
+import server.exceptions.AuthenticationException;
 import server.exceptions.DatabaseException;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 
 import static java.lang.String.format;
 import static shared.util.FileHelper.loadFile;
@@ -49,29 +49,33 @@ public class PersonDAO extends DAO<Person> {
         statement.setString(8, person.getSpouse());
     }
 
-    public Person getFromUsername(String username) throws DatabaseException {
+    public Person getFromAuth(String personID, String token)
+        throws AuthenticationException, DatabaseException {
+
+        log.entering("PersonDAO", "getFromAuth");
 
         try {
 
-            final String sql = loadFile("sql/person_from_username.sql");
+            final String sql = loadFile("sql/person_from_auth.sql");
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
-                statement.setString(1, username);
+                statement.setString(1, personID);
+                statement.setString(2, token);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     return modelFactory(resultSet);
                 }
+                throw new AuthenticationException();
 
             } catch (SQLException e) {
                 throw new DatabaseException(
-                    format("Failed to get Person w/username='%s'", username), e);
+                    format("Failed to get Person w/token='%s'", token), e);
             }
 
         } catch (IOException e) {
 
             throw new DatabaseException("Failed to load SQL file!");
         }
-        return null;
     }
 
 }
