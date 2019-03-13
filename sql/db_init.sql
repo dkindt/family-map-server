@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS auth (
 );
 
 CREATE TABLE IF NOT EXISTS persons (
-                                     personID VARCHAR(255) NOT NULL,
+  personID VARCHAR(255) NOT NULL,
   descendant VARCHAR(255) NOT NULL,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
@@ -46,20 +46,20 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS events (
-  id VARCHAR(255) NOT NULL,
+  eventID VARCHAR(255) NOT NULL,
   descendant VARCHAR(255) NOT NULL,
-  person VARCHAR(255) NOT NULL,
+  personID VARCHAR(255) NOT NULL,
   latitude FLOAT NOT NULL,
   longitude FLOAT NOT NULL,
   country VARCHAR(255) NOT NULL,
   city VARCHAR(255) NOT NULL,
-  type VARCHAR(255) NOT NULL,
+  eventType VARCHAR(255) NOT NULL,
   year INTEGER NOT NULL,
-  PRIMARY KEY (id),
+  PRIMARY KEY (eventID),
   FOREIGN KEY (descendant)
     REFERENCES users(username)
     ON DELETE NO ACTION,
-  FOREIGN KEY (person)
-    REFERENCES persons(uuid)
+  FOREIGN KEY (personID)
+    REFERENCES persons(personID)
     ON DELETE NO ACTION
 );

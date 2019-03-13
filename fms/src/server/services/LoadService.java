@@ -62,7 +62,6 @@ public class LoadService extends BaseService {
                 User[] users = request.getUsers();
                 Person[] persons = request.getPersons();
                 Event[] events = request.getEvents();
-                log.info(Arrays.toString(events));
 
                 log.fine(format("Loading %s users, %s persons, and %s events",
                     users.length, persons.length, events.length));

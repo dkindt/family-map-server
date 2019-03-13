@@ -16,7 +16,7 @@ import static shared.util.FileHelper.loadFile;
 public class EventDAO extends DAO<Event> {
 
     public EventDAO(Connection connection) {
-        super(connection, "events", "id");
+        super(connection, "events", "eventID");
     }
 
     @Override
@@ -24,7 +24,7 @@ public class EventDAO extends DAO<Event> {
         Event event = new Event();
         event.setEventID(resultSet.getString("eventID"));
         event.setDescendant(resultSet.getString("descendant"));
-        event.setPerson(resultSet.getString("person"));
+        event.setPerson(resultSet.getString("personID"));
         event.setLatitude(resultSet.getFloat("latitude"));
         event.setLongitude(resultSet.getFloat("longitude"));
         event.setCountry(resultSet.getString("country"));
