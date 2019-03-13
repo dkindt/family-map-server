@@ -1,0 +1,7 @@
+SELECT *
+FROM %s
+WHERE username OR descendant = (
+    SELECT username
+    FROM auth
+    WHERE token = ?
+)

@@ -3,14 +3,20 @@ package shared.util;
 import com.google.gson.Gson;
 
 import java.io.*;
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static shared.util.Logging.setupLogger;
 
 public class FileHelper {
+
+    private static final Logger log = setupLogger("fms-file-helper");
 
     public static String loadFile(String path) throws IOException {
 
         StringBuilder stringBuilder = new StringBuilder();
         File file = new File(path);
-        System.out.println(file.getAbsolutePath());
+        log.info(format("Loading file: '%s'", file.getAbsolutePath()));
         try (FileReader fileReader = new FileReader(file)) {
             try (BufferedReader reader = new BufferedReader(fileReader)) {
                 String line;
@@ -28,7 +34,7 @@ public class FileHelper {
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {
-            sb.append(String.format("%s\n", line));
+            sb.append(format("%s\n", line));
         }
         br.close();
         return sb.toString();

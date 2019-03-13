@@ -1,6 +1,5 @@
 package server.database.dao;
 
-import server.database.model.Person;
 import server.exceptions.DatabaseException;
 
 import java.sql.*;
@@ -8,6 +7,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static shared.util.Logging.setupLogger;
 
 /**
  * Provides the base DAO interface for each service.
@@ -17,7 +17,7 @@ import static java.lang.String.format;
  */
 abstract class DAO<T> {
 
-    protected Logger log = Logger.getLogger("family-map-server");
+    protected static final Logger log = setupLogger("fms-dao");
 
     // Generic SQL query statements
     protected String SQL_DELETE = "DELETE FROM %s WHERE %s=?";
@@ -153,32 +153,23 @@ abstract class DAO<T> {
         return null;
     }
 
-//    public T[] getAll(String token) {
-//
-//        log.entering("DAO", format("getAll(token='%s')", token));
-//
-//        List<T> results = new ArrayList<>();
-//        String sql = format(
-//            "SELECT * FROM %s WHERE (SELECT username FROM auth WHERE token = ?)",
-//            tableName
-//        );
-//
-//    }
-
     public List<T> getAll() throws DatabaseException {
 
         log.entering("DAO", "getAll");
 
         List<T> results = new ArrayList<>();
         String sql = format(SQL_SELECT_ALL, tableName);
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, tableName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                results.add(modelFactory(resultSet));
+                log.info("Getting ResultSet");
+                T model = modelFactory(resultSet);
+                log.info(model.toString());
+                results.add(model);
             }
-            connection.commit();
 
         } catch (SQLException e) {
 

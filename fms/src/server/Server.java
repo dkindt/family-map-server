@@ -10,39 +10,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.logging.*;
 
+import static shared.util.Logging.setupLogger;
+
 public class Server {
 
     private static final int MAX_WAITING_CONNECTIONS = 12;
-    private static Logger log;
-
-    static {
-        try {
-            initLog();
-        }
-        catch (IOException e) {
-            System.out.println(String.format("Could not initialize log: %s", e.getMessage()));
-            e.printStackTrace();
-        }
-    }
-
-    private static void initLog() throws IOException {
-
-        Level level = Level.FINEST;
-
-        log = Logger.getLogger("family-map-server");
-        log.setLevel(level);
-        log.setUseParentHandlers(false);
-
-        Handler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(level);
-        consoleHandler.setFormatter(new SimpleFormatter());
-        log.addHandler(consoleHandler);
-
-        java.util.logging.FileHandler fileHandler = new java.util.logging.FileHandler("fms.log", false);
-        fileHandler.setLevel(level);
-        fileHandler.setFormatter(new SimpleFormatter());
-        log.addHandler(fileHandler);
-    }
+    private static Logger log = setupLogger("fms");
 
     private HttpServer server;
 
@@ -82,7 +55,7 @@ public class Server {
         // is received, it looks at the URL path inside the HTTP request, and
         // forwards the request to the handler for that URL path.
         // TL;DR this sets up our server's `routes`
-        log.info("Creating contexts");
+        log.info("Creating contexts (routes)");
         server.createContext("/", new FileHandler());
         server.createContext("/user/login", new LoginHandler());
         server.createContext("/user/register", new RegisterHandler());
@@ -100,7 +73,7 @@ public class Server {
         // in the background.
         server.start();
 
-        log.info(String.format("Server started at: %s", server.getAddress()));
+        log.info(String.format("Server started at: http:/%s", server.getAddress()));
     }
 
     // "main" method for the server program

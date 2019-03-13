@@ -10,8 +10,6 @@ import shared.result.PersonResult;
 import java.io.IOException;
 import java.util.Map;
 
-import static java.lang.String.format;
-
 public class PersonHandler extends BaseHandler implements HttpHandler {
 
     public PersonHandler() {
@@ -35,9 +33,6 @@ public class PersonHandler extends BaseHandler implements HttpHandler {
             try {
 
                 String token = getAuthorization(exchange);
-                if (token == null || token.isEmpty()) {
-                    throw new AuthenticationException();
-                }
 
                 Map<String, String> params = getURLParams(exchange);
                 String personID = params.get("person");
@@ -55,7 +50,7 @@ public class PersonHandler extends BaseHandler implements HttpHandler {
             } catch (DatabaseException e) {
 
                 log.severe(e.getMessage());
-                result = new PersonResult(format("Internal error: %s", e.getMessage()));
+                result = new PersonResult(e.getMessage());
                 status = 500;
 
             }

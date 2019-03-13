@@ -8,11 +8,14 @@ import server.exceptions.DatabaseException;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.logging.Logger;
 
 import static shared.util.FileHelper.loadFile;
+import static shared.util.Logging.setupLogger;
 
 public class Database {
 
+    private static final Logger log = setupLogger("fms-database");
     private Connection connection;
 
     static {

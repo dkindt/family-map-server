@@ -3,6 +3,7 @@ package server.handlers;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import server.exceptions.AuthenticationException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -10,12 +11,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static shared.util.FileHelper.inputStreamToString;
+import static shared.util.Logging.setupLogger;
 import static shared.util.RegexHelper.search;
 
 abstract class BaseHandler {
 
+    protected static final Logger log = setupLogger("fms-handler");
     String supportedMethod;
-    static Logger log = Logger.getLogger("family-map-server");
 
     BaseHandler() {}
 
@@ -78,7 +80,12 @@ abstract class BaseHandler {
         return search(getURLPattern(), exchange.getRequestURI().getPath());
     }
 
-    protected String getAuthorization(HttpExchange exchange) {
-        return exchange.getRequestHeaders().getFirst("Authorization");
+    protected String getAuthorization(HttpExchange exchange) throws AuthenticationException {
+
+        String token = exchange.getRequestHeaders().getFirst("Authorization");
+        if (token == null || token.isEmpty()) {
+            throw new AuthenticationException();
+        }
+        return token;
     }
 }
