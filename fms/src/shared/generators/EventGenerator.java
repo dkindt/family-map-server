@@ -46,7 +46,7 @@ public class EventGenerator {
     static Event createBirth(Person person, String root, int yearOfBirth) {
 
         Event event = LocationGenerator.generate();
-        event.setType("Birth");
+        event.setEventType("Birth");
         event.setYear(yearOfBirth);
         event.setPerson(person.getUUID());
         event.setDescendant(root);
@@ -58,7 +58,7 @@ public class EventGenerator {
 
         Event deathEvent = LocationGenerator.generate();
 
-        deathEvent.setType("Death");
+        deathEvent.setEventType("Death");
         deathEvent.setPerson(person.getUUID());
         deathEvent.setDescendant(root);
         deathEvent.setYear(calcDeathYear(year));
@@ -70,13 +70,13 @@ public class EventGenerator {
 
         Event event = LocationGenerator.generate();
         event.setDescendant(root);
-        event.setType("Marriage");
+        event.setEventType("Marriage");
         event.setYear(calcMarriageYear(year));
         event.setPerson(mother.getUUID());
 
         Event eventCopy = event.clone();
         eventCopy.setPerson(father.getUUID());
-        eventCopy.setUUID(generateUUID());
+        eventCopy.setEventID(generateUUID());
 
         return new ArrayList<>() {{
             add(event);
@@ -93,7 +93,7 @@ public class EventGenerator {
 
         int yearOfEvent = calcRandomYear(year, DEFAULT_BOUND);
         Event event = LocationGenerator.generate();
-        event.setType(getRandomType());
+        event.setEventType(getRandomType());
         event.setYear(yearOfEvent);
         event.setPerson(person.getUUID());
         event.setDescendant(root);

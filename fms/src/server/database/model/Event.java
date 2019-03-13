@@ -1,36 +1,30 @@
 package server.database.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import static shared.util.DatabaseHelper.generateUUID;
 
 /** Represents an Event row in the events table. */
 public class Event extends BaseModel {
 
-    private String id;
+    private String eventID;
     private String descendant;
-
-    @SerializedName("personID")
-    private String person;
+    private String personID;
     private float latitude;
     private float longitude;
     private String country;
     private String city;
-
-    @SerializedName("eventType")
-    private String type;
+    private String eventType;
     private int year;
 
     public Event() {
-        this.id = generateUUID();
+        this.eventID = generateUUID();
     }
 
-    public String getUUID() {
-        return id;
+    public String getEventID() {
+        return eventID;
     }
 
-    public void setUUID(String id) {
-        this.id = id;
+    public void setEventID(String id) {
+        this.eventID = id;
     }
 
     public String getDescendant() {
@@ -42,11 +36,11 @@ public class Event extends BaseModel {
     }
 
     public String getPerson() {
-        return person;
+        return personID;
     }
 
     public void setPerson(String person) {
-        this.person = person;
+        this.personID = person;
     }
 
     public float getLatitude() {
@@ -81,12 +75,12 @@ public class Event extends BaseModel {
         this.city = city;
     }
 
-    public String getType() {
-        return type;
+    public String getEventType() {
+        return eventType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setEventType(String type) {
+        this.eventType = type;
     }
 
     public int getYear() {
@@ -103,14 +97,14 @@ public class Event extends BaseModel {
             return (Event) super.clone();
         } catch (CloneNotSupportedException e) {
             Event event = new Event();
-            event.setUUID(getUUID());
+            event.setEventID(getEventID());
             event.setDescendant(getDescendant());
             event.setPerson(getPerson());
             event.setLatitude(getLatitude());
             event.setLongitude(getLongitude());
             event.setCountry(getCountry());
             event.setCity(getCity());
-            event.setType(getType());
+            event.setEventType(getEventType());
             event.setYear(getYear());
             return event;
         }
@@ -119,27 +113,27 @@ public class Event extends BaseModel {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\nEvent(");
-        sb.append(toStringHelper("uuid"));
+        sb.append(toStringHelper("eventID"));
         sb.append(toStringHelper("descendant"));
         sb.append(toStringHelper("person"));
         sb.append(toStringHelper("latitude"));
         sb.append(toStringHelper("longitude"));
         sb.append(toStringHelper("country"));
         sb.append(toStringHelper("city"));
-        sb.append(toStringHelper("type"));
+        sb.append(toStringHelper("eventType"));
         sb.append(toStringHelper("year"));
         sb.append("\n)");
         String format = sb.toString();
         return String.format(
             format,
-            getUUID(),
+            getEventID(),
             getDescendant(),
             getPerson(),
             getLatitude(),
             getLongitude(),
             getCountry(),
             getCity(),
-            getType(),
+            getEventType(),
             getYear()
         );
     }

@@ -22,14 +22,14 @@ public class EventDAO extends DAO<Event> {
     @Override
     Event modelFactory(ResultSet resultSet) throws SQLException {
         Event event = new Event();
-        event.setUUID(resultSet.getString("id"));
+        event.setEventID(resultSet.getString("eventID"));
         event.setDescendant(resultSet.getString("descendant"));
         event.setPerson(resultSet.getString("person"));
         event.setLatitude(resultSet.getFloat("latitude"));
         event.setLongitude(resultSet.getFloat("longitude"));
         event.setCountry(resultSet.getString("country"));
         event.setCity(resultSet.getString("city"));
-        event.setType(resultSet.getString("type"));
+        event.setEventType(resultSet.getString("eventType"));
         event.setYear(resultSet.getInt("year"));
         return event;
     }
@@ -42,14 +42,14 @@ public class EventDAO extends DAO<Event> {
     @Override
     void bindParameters(PreparedStatement statement, Event event) throws SQLException {
 
-        statement.setString(1, event.getUUID());
+        statement.setString(1, event.getEventID());
         statement.setString(2, event.getDescendant());
         statement.setString(3, event.getPerson());
         statement.setFloat(4, event.getLatitude());
         statement.setFloat(5, event.getLongitude());
         statement.setString(6, event.getCountry());
         statement.setString(7, event.getCity());
-        statement.setString(8, event.getType());
+        statement.setString(8, event.getEventType());
         statement.setInt(9, event.getYear());
     }
 

@@ -1,6 +1,6 @@
 SELECT *
 FROM events
-WHERE id = ?
+WHERE eventID = ?
 AND descendant = (
   SELECT username
   FROM auth
