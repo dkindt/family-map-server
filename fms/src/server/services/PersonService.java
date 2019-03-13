@@ -9,6 +9,7 @@ import shared.result.PersonResult;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -32,8 +33,6 @@ public class PersonService extends BaseService {
     public PersonResult getPerson(String uuid, String token)
         throws AuthenticationException, DatabaseException {
 
-        log.entering("PersonService", "getPerson");
-
         try (Connection connection = database.openConnection()) {
 
             personDAO = new PersonDAO(connection);
@@ -54,10 +53,25 @@ public class PersonService extends BaseService {
      * Retrieves a list of Person for the currently logged-in User.
      * @return PersonResult object.
      */
-    public PersonResult getAllPersons(String token) throws AuthenticationException {
+    public PersonResult getAllPersons(String token)
+        throws AuthenticationException, DatabaseException {
 
-        log.entering("PersonService", "getAllPersons");
-        return null;
+        try (Connection connection = database.openConnection()) {
+
+            personDAO = new PersonDAO(connection);
+            List<Person> persons = personDAO.getAllFromToken(token);
+            Person[] data = new Person[persons.size()];
+            data = persons.toArray(data);
+
+            if (data.length != 0) {
+                return new PersonResult(data);
+            }
+            return new PersonResult("No persons found!");
+
+        } catch (SQLException e) {
+
+            throw new DatabaseException("Failed to get all persons", e);
+        }
     }
 
 }

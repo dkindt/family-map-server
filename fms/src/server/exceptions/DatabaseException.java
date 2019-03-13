@@ -2,6 +2,7 @@ package server.exceptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 
 import static java.lang.String.format;
@@ -43,7 +44,7 @@ public class DatabaseException extends Exception {
         String message = super.getMessage();
         if (causedBySQL) {
             message = format(
-                "%s\nSQLException details:\n\tstate='%s',\n\tcode='%s'\n\tmessage='%s'",
+                "%s caused by SQLException(state=\'%s\', code=%s message=\'%s\')",
                 message, sqlState, sqlErrorCode, sqlMessage
             );
         }

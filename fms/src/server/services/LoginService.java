@@ -13,14 +13,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.util.logging.Level.SEVERE;
 import static shared.util.DatabaseHelper.generateUUID;
 
 /** Provides service for logging a User into their account. */
-public class LoginService {
-
-    private static Logger log = Logger.getLogger("family-map-server");
+public class LoginService extends BaseService {
 
     /**
      * Logs a User in and generates a new auth token.
@@ -29,8 +29,6 @@ public class LoginService {
      * @return LoginResult object.
      */
     public LoginResult login(LoginRequest request) throws DatabaseException {
-
-        log.entering("LoginService", "login");
 
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
@@ -58,7 +56,8 @@ public class LoginService {
             return new LoginResult(token, username, personID);
 
         } catch (DatabaseException | SQLException e) {
-            e.printStackTrace();
+
+            log.log(SEVERE, "Failed to login!", e);
             db.closeConnection(false);
         }
         return null;

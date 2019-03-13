@@ -52,8 +52,6 @@ public class PersonDAO extends DAO<Person> {
     public Person getFromAuth(String personID, String token)
         throws AuthenticationException, DatabaseException {
 
-        log.entering("PersonDAO", "getFromAuth");
-
         try {
 
             final String sql = loadFile("sql/person_from_auth.sql");

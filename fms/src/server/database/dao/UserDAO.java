@@ -52,8 +52,6 @@ public class UserDAO extends DAO<User> {
 
     public int clearUserData(String username) throws DatabaseException {
 
-        log.entering("DAO", "clearUserData");
-
         int rows = 0;
         final String sqlPerson = "DELETE FROM persons WHERE descendant=?";
         final String sqlEvent = "DELETE FROM events WHERE descendant=?";

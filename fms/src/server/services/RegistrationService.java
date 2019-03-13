@@ -14,17 +14,12 @@ import shared.generators.FamilyTreeGenerator;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static java.util.logging.Level.SEVERE;
 import static shared.util.DatabaseHelper.generateUUID;
 
 
 /** Provides service for registering a new User. */
 public class RegistrationService extends BaseService {
-
-    private String message;
-
-    public RegistrationService(String message) {
-        this.message = message;
-    }
 
     public RegistrationService() {
 
@@ -94,7 +89,7 @@ public class RegistrationService extends BaseService {
 
         } catch (DatabaseException | SQLException e) {
 
-            log.severe(e.getMessage());
+            log.log(SEVERE, "Failed to register new User!", e);
             db.closeConnection(false);
             result = new RegistrationResult(e.getMessage());
         }

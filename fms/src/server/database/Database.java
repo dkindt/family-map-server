@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.logging.Logger;
 
 import static shared.util.FileHelper.loadFile;
-import static shared.util.Logging.setupLogger;
+import static shared.util.LoggingHelper.setupLogger;
 
 public class Database {
 

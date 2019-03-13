@@ -67,6 +67,7 @@ public class EventDAO extends DAO<Event> {
                 else throw new AuthenticationException();
 
             } catch (SQLException e) {
+
                 throw new DatabaseException(
                     format("Failed to get Event w/token='%s'", token), e);
             }

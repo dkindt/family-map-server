@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.logging.*;
 
-import static shared.util.Logging.setupLogger;
+import static java.util.logging.Level.SEVERE;
+import static shared.util.LoggingHelper.setupLogger;
 
 public class Server {
 
@@ -43,7 +44,7 @@ public class Server {
                 MAX_WAITING_CONNECTIONS);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            log.log(SEVERE, e.getMessage(), e);
             return;
         }
 

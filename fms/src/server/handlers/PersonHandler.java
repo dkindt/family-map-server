@@ -10,6 +10,8 @@ import shared.result.PersonResult;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.util.logging.Level.SEVERE;
+
 public class PersonHandler extends BaseHandler implements HttpHandler {
 
     public PersonHandler() {
@@ -23,8 +25,6 @@ public class PersonHandler extends BaseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
-        log.entering("PersonHandler", "handle");
 
         int status = 200;
         PersonResult result;
@@ -49,7 +49,7 @@ public class PersonHandler extends BaseHandler implements HttpHandler {
 
             } catch (DatabaseException e) {
 
-                log.severe(e.getMessage());
+                log.log(SEVERE, e.getMessage(), e);
                 result = new PersonResult(e.getMessage());
                 status = 500;
 

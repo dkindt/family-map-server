@@ -15,8 +15,7 @@ public class ClearHandler extends BaseHandler implements HttpHandler {
 
     @Override
     String getURLPattern() {
-        final String pattern = "";
-        return pattern;
+        return "(?i)^/clear/*$";
     }
 
     @Override

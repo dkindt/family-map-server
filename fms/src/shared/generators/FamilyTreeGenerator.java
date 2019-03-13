@@ -44,10 +44,7 @@ public class FamilyTreeGenerator extends BaseGenerator {
         EventDAO eventDAO = new EventDAO(connection);
         PersonDAO personDAO = new PersonDAO(connection);
 
-        log.info("Adding Event objects to Database");
         rows += eventDAO.insertBulk(events);
-
-        log.info("Adding Person objects to Database");
         rows += personDAO.insertBulk(persons);
 
         return rows;
@@ -59,8 +56,6 @@ public class FamilyTreeGenerator extends BaseGenerator {
     }
 
     public void generateFamilyTree(Person person, int generations) {
-
-        log.entering("FamilyTreeGenerator", "create", "Generating Family Tree");
 
         root = person.getDescendant();
         int year = calcBirthYear(EventGenerator.CURRENT_YEAR);

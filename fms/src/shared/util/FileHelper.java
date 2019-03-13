@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static shared.util.Logging.setupLogger;
+import static shared.util.LoggingHelper.setupLogger;
 
 public class FileHelper {
 

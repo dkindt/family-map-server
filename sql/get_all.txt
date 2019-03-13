@@ -1,6 +1,6 @@
 SELECT *
 FROM %s
-WHERE username OR descendant = (
+WHERE username = (
     SELECT username
     FROM auth
     WHERE token = ?

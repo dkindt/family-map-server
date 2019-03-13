@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static shared.util.FileHelper.inputStreamToString;
-import static shared.util.Logging.setupLogger;
+import static shared.util.LoggingHelper.setupLogger;
 import static shared.util.RegexHelper.search;
 
 abstract class BaseHandler {
@@ -71,7 +71,6 @@ abstract class BaseHandler {
 
     Map<String, String> getURLParams(HttpExchange exchange) {
 
-        log.entering("Handler", "getURLParams");
         Map<String, String> params = parseURL(exchange);
         return params;
     }

@@ -25,8 +25,6 @@ public class FillService extends BaseService {
      */
     public FillResult fill(String username, int generations) throws DatabaseException {
 
-        log.entering("FillService", "fill");
-
         String respMessage;
 
         Database db = new Database();

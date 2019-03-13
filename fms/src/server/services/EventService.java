@@ -9,7 +9,6 @@ import shared.result.EventResult;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -36,8 +35,6 @@ public class EventService extends BaseService {
     public EventResult getEvent(String id, String token)
         throws AuthenticationException, DatabaseException {
 
-        log.entering("EventService", "getEvent");
-
         try (Connection connection = database.openConnection()) {
 
             eventDAO = new EventDAO(connection);
@@ -63,12 +60,10 @@ public class EventService extends BaseService {
     public EventResult getAllEvents(String token)
         throws AuthenticationException, DatabaseException {
 
-        log.entering("EventService", "getAllEvents");
-
         try (Connection connection = database.openConnection()) {
 
             eventDAO = new EventDAO(connection);
-            List<Event> events = eventDAO.getAll();
+            List<Event> events = eventDAO.getAllFromToken(token);
             Event[] data = new Event[events.size()];
             data = events.toArray(data);
 
@@ -78,6 +73,7 @@ public class EventService extends BaseService {
             return new EventResult("No events found!");
 
         } catch (SQLException e) {
+
             throw new DatabaseException("Failed to get all events", e);
         }
     }

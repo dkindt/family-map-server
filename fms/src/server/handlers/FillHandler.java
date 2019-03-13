@@ -9,6 +9,7 @@ import shared.result.FillResult;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.util.logging.Level.SEVERE;
 import static shared.generators.FamilyTreeGenerator.DEFAULT_GENERATIONS;
 
 
@@ -25,8 +26,6 @@ public class FillHandler extends BaseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
-        log.entering("FillHandler", "handle");
 
         if (isValidRequestMethod(exchange)) {
 
@@ -49,6 +48,8 @@ public class FillHandler extends BaseHandler implements HttpHandler {
                 result = new FillService().fill(username, generations);
 
             } catch (DatabaseException e) {
+
+                log.log(SEVERE, e.getMessage(), e);
                 result = new FillResult(e.getMessage());
                 status = 500;
             }

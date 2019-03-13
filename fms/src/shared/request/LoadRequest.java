@@ -50,6 +50,7 @@ public class LoadRequest extends BaseRequest {
 
     @Override
     public void verify() throws InvalidParameterException {
+
         if (users == null) throw new InvalidParameterException("missing", "users");
         if (persons == null) throw new InvalidParameterException("missing", "persons");
         if (events == null) throw new InvalidParameterException("missing", "events");

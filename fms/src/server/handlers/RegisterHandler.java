@@ -9,6 +9,8 @@ import shared.result.RegistrationResult;
 
 import java.io.IOException;
 
+import static java.util.logging.Level.SEVERE;
+
 public class RegisterHandler extends BaseHandler implements HttpHandler {
 
     public RegisterHandler() {
@@ -23,8 +25,6 @@ public class RegisterHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        log.entering("RegisterHandler", "handle");
-
         int status = 200;
         RegistrationResult result = null;
         if (isValidRequestMethod(exchange)) {
@@ -36,7 +36,7 @@ public class RegisterHandler extends BaseHandler implements HttpHandler {
                 result = new RegistrationService().register(request);
             } catch (DatabaseException e) {
 
-                log.severe(e.getMessage());
+                log.log(SEVERE, e.getMessage(), e);
                 result = new RegistrationResult(e.getMessage());
                 status = 500;
             }

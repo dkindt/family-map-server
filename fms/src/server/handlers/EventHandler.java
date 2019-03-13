@@ -10,6 +10,8 @@ import shared.result.EventResult;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.util.logging.Level.SEVERE;
+
 public class EventHandler extends BaseHandler implements HttpHandler {
 
     public EventHandler() {
@@ -24,8 +26,6 @@ public class EventHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        log.entering("EventHandler", "handle");
-
         int status = 200;
         EventResult result;
         if (isValidRequestMethod(exchange)) {
@@ -38,12 +38,8 @@ public class EventHandler extends BaseHandler implements HttpHandler {
                 String eventID = params.get("event");
 
                 EventService service = new EventService();
-                if (eventID == null) {
-                    result = service.getAllEvents(token);
-                } else {
-                    result = service.getEvent(eventID, token);
-                }
-
+                if (eventID == null) result = service.getAllEvents(token);
+                else result = service.getEvent(eventID, token);
 
             } catch (AuthenticationException e) {
 
@@ -53,7 +49,7 @@ public class EventHandler extends BaseHandler implements HttpHandler {
 
             } catch (DatabaseException e) {
 
-                log.severe(e.getMessage());
+                log.log(SEVERE, e.getMessage(), e);
                 result = new EventResult(e.getMessage());
                 status = 500;
 

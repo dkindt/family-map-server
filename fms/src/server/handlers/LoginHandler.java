@@ -9,6 +9,8 @@ import shared.result.LoginResult;
 
 import java.io.IOException;
 
+import static java.util.logging.Level.SEVERE;
+
 public class LoginHandler extends BaseHandler implements HttpHandler {
 
     public LoginHandler() {
@@ -23,8 +25,6 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        log.entering("LoginHandler", "handle");
-
         int status = 200;
         LoginResult result = null;
         if (isValidRequestMethod(exchange)) {
@@ -37,7 +37,7 @@ public class LoginHandler extends BaseHandler implements HttpHandler {
 
             } catch (DatabaseException e) {
 
-                log.severe(e.getMessage());
+                log.log(SEVERE, e.getMessage(), e);
                 result = new LoginResult(e.getMessage());
                 status = 500;
             }

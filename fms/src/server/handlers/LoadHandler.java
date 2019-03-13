@@ -2,7 +2,6 @@ package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import server.exceptions.DatabaseException;
 import server.exceptions.InvalidParameterException;
 import server.services.LoadService;
 import shared.request.LoadRequest;
@@ -19,9 +18,12 @@ public class LoadHandler extends BaseHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    String getURLPattern() {
+        return "(?i)^/load/*$";
+    }
 
-        log.entering("LoadHandler", "handle");
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
 
         int status = 500;
         LoadResult result = null;
@@ -35,19 +37,10 @@ public class LoadHandler extends BaseHandler implements HttpHandler {
                 result = new LoadService().load(request);
             }
         } catch (InvalidParameterException e) {
-            String msg = format(
-                "InvalidParameterException(param='%s', desc='%s')",
-                e.getMessage(), e.getParameter()
-            );
-            log.info(msg);
-            result = new LoadResult(msg);
+
+            result = new LoadResult(e.getMessage());
             status = 400;
         }
         sendJSONResponse(result, exchange, status);
-    }
-
-    @Override
-    String getURLPattern() {
-        return "(?i)^/load/*$";
     }
 }

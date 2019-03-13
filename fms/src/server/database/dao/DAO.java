@@ -1,13 +1,15 @@
 package server.database.dao;
 
+import server.exceptions.AuthenticationException;
 import server.exceptions.DatabaseException;
 
+import java.lang.reflect.Parameter;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static shared.util.Logging.setupLogger;
+import static shared.util.LoggingHelper.setupLogger;
 
 /**
  * Provides the base DAO interface for each service.
@@ -20,11 +22,12 @@ abstract class DAO<T> {
     protected static final Logger log = setupLogger("fms-dao");
 
     // Generic SQL query statements
-    protected String SQL_DELETE = "DELETE FROM %s WHERE %s=?";
-    protected String SQL_DELETE_ROWS = "DELETE FROM %s";
-    protected String SQL_INSERT = "INSERT INTO %s VALUES (%s)";
-    protected String SQL_SELECT = "SELECT * FROM %s WHERE %s=?";
-    protected String SQL_SELECT_ALL = "SELECT * FROM %s";
+    final private String SQL_DELETE = "DELETE FROM %s WHERE %s=?";
+    final private String SQL_DELETE_ROWS = "DELETE FROM %s";
+    final private String SQL_INSERT = "INSERT INTO %s VALUES (%s)";
+    final private String SQL_SELECT = "SELECT * FROM %s WHERE %s=?";
+    final private String SQL_SELECT_ALL = "SELECT * FROM %s";
+    final private String SQL_USER_FROM_TOKEN = "SELECT username FROM auth WHERE token=?";
 
     protected Connection connection;
     protected String tableName;
@@ -56,10 +59,8 @@ abstract class DAO<T> {
 
     public int insertBulk(List<T> items) throws DatabaseException {
 
-        log.entering("DAO", "insertBulk");
-
         int added;
-        String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
+        final String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             for (T item : items) {
@@ -80,9 +81,7 @@ abstract class DAO<T> {
 
     public boolean insert(T model) throws DatabaseException {
 
-        log.entering("DAO", "insert");
-
-        String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
+        final String sql = format(SQL_INSERT, tableName, genPlaceHolderString());
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             bindParameters(statement, model);
@@ -100,9 +99,7 @@ abstract class DAO<T> {
 
     public T get(Map<String, String> fields) throws DatabaseException {
 
-        log.entering("DAO", "get");
-
-        String sql = format(
+        final String sql = format(
             "SELECT * FROM %s WHERE %s", tableName,
             String.join(" AND ",
                 fields.keySet()
@@ -134,9 +131,7 @@ abstract class DAO<T> {
 
     public T get(String pk) throws DatabaseException {
 
-        log.entering("DAO", "get");
-
-        String sql = format(SQL_SELECT, tableName, primaryKeyName);
+        final String sql = format(SQL_SELECT, tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, pk);
@@ -153,36 +148,51 @@ abstract class DAO<T> {
         return null;
     }
 
-    public List<T> getAll() throws DatabaseException {
+    public List<T> getAllFromToken(String token) throws AuthenticationException, DatabaseException {
 
-        log.entering("DAO", "getAll");
-
-        List<T> results = new ArrayList<>();
-        String sql = format(SQL_SELECT_ALL, tableName);
-
+        // get the username for the token.
+        final String sql = SQL_USER_FROM_TOKEN;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, tableName);
+            statement.setString(1, token);
+            ResultSet resultSet = statement.executeQuery();
+            if (!resultSet.next()) throw new AuthenticationException();
+
+            String username = resultSet.getString("username");
+            return getAll(username);
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed attempting to get username for token!");
+        }
+    }
+
+    public List<T> getAll(String username) throws DatabaseException {
+
+        List<T> results = new ArrayList<>();
+
+        final String sql = format(SQL_SELECT, tableName, "descendant");
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                log.info("Getting ResultSet");
-                T model = modelFactory(resultSet);
-                log.info(model.toString());
-                results.add(model);
+                results.add(modelFactory(resultSet));
             }
 
         } catch (SQLException e) {
 
-            throw new DatabaseException("Failed to getAll()", e);
+            log.severe(e.getMessage());
+            throw new DatabaseException(
+                format("Failed to getAll(tableName='%s')", tableName), e);
         }
+
+        log.fine(format("%s records returned from `%s` table", results.size(), tableName));
         return results;
     }
 
     public boolean delete(String id) throws DatabaseException {
 
-        log.entering("DAO", "delete");
-
-        String sql = format(SQL_DELETE, tableName, primaryKeyName);
+        final String sql = format(SQL_DELETE, tableName, primaryKeyName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, id);
@@ -200,11 +210,12 @@ abstract class DAO<T> {
 
     public int clear() throws DatabaseException {
 
-        log.entering("DAO", "clear");
+        log.info(format("Clearing `%s` table", tableName));
 
         int rows;
-        String sql = format(SQL_DELETE_ROWS, tableName);
+        final String sql = format(SQL_DELETE_ROWS, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             rows = statement.executeUpdate();
 
         } catch (SQLException e) {

@@ -35,26 +35,12 @@ public class FileHandler extends BaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        log.entering("FileHandler", "handle");
-        /// 1. Retrieve the request URL from the HttpExchange
-        //	2. Translate the request URL path to a physical file path on your server
-        //	3. Open the requested file, and return its contents in the HTTP
-        //	    response body
-        try {
-            if (isValidRequestMethod(exchange)) {
+        int status = 200;
+        if (isValidRequestMethod(exchange)) {
 
-                Path path = buildFilePath(exchange.getRequestURI());
-                File file = path.toFile();
-                sendResponse(exchange, new FileInputStream(file), 200);
-
-            } else {
-                // unsupported http method
-                // TODO: send response
-                log.warning(format("Unsupported method: %s", exchange.getRequestMethod()));
-
-            }
-        } catch (IOException e) {
-            log.severe("IOException thrown in FileHandler");
+            Path path = buildFilePath(exchange.getRequestURI());
+            File file = path.toFile();
+            sendResponse(exchange, new FileInputStream(file), status);
         }
     }
 
