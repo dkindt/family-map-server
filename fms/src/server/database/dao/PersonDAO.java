@@ -14,13 +14,13 @@ public class PersonDAO extends DAO<Person> {
 
     public PersonDAO(Connection connection) {
 
-        super(connection, "persons", "uuid");
+        super(connection, "persons", "personID");
     }
 
     @Override
     Person modelFactory(ResultSet resultSet) throws SQLException {
         Person person = new Person();
-        person.setUUID(resultSet.getString("uuid"));
+        person.setUUID(resultSet.getString("personID"));
         person.setDescendant(resultSet.getString("descendant"));
         person.setFirstName(resultSet.getString("first_name"));
         person.setLastName(resultSet.getString("last_name"));

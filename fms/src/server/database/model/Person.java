@@ -5,7 +5,7 @@ import static shared.util.DatabaseHelper.generateUUID;
 /** Represents a Person row in the persons table. */
 public class Person extends BaseModel {
 
-    private String uuid;
+    private String personID;
     private String descendant;
     private String firstName;
     private String lastName;
@@ -15,7 +15,7 @@ public class Person extends BaseModel {
     private String spouse;
 
     public Person() {
-        this.uuid = generateUUID();
+        this.personID = generateUUID();
     }
 
     public static Person fromUser(User user) {
@@ -29,11 +29,11 @@ public class Person extends BaseModel {
     }
 
     public String getUUID() {
-        return uuid;
+        return personID;
     }
 
     public void setUUID(String uuid) {
-        this.uuid = uuid;
+        this.personID = uuid;
     }
 
     public String getDescendant() {
@@ -95,7 +95,7 @@ public class Person extends BaseModel {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\nPerson(");
-        sb.append(toStringHelper("uuid"));
+        sb.append(toStringHelper("personID"));
         sb.append(toStringHelper("descendant"));
         sb.append(toStringHelper("firstName"));
         sb.append(toStringHelper("lastName"));

@@ -29,7 +29,7 @@ public class UserDAO extends DAO<User> {
         user.setFirstName(resultSet.getString("first_name"));
         user.setLastName(resultSet.getString("last_name"));
         user.setGender(resultSet.getString("gender"));
-        user.setPersonID(resultSet.getString("person_id"));
+        user.setPersonID(resultSet.getString("personID"));
         return user;
     }
 

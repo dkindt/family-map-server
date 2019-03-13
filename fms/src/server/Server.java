@@ -38,10 +38,13 @@ public class Server {
             // Rather than calling "new" directly, we instead insert
             // the object by calling the HttpServer.insert static factory method.
             // Just like "new", this method returns a reference to the new object.
-            String hostname = "localhost";
+            //String hostname = "localhost";
             server = HttpServer.create(
-                new InetSocketAddress(hostname, Integer.parseInt(portNumber)),
+                new InetSocketAddress("localhost", Integer.parseInt(portNumber)),
                 MAX_WAITING_CONNECTIONS);
+//            server = HttpServer.create(
+//                new InetSocketAddress(Integer.parseInt(portNumber)),
+//                MAX_WAITING_CONNECTIONS);
         }
         catch (IOException e) {
             log.log(SEVERE, e.getMessage(), e);

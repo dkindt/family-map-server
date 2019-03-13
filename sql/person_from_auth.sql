@@ -1,6 +1,6 @@
 SELECT *
 FROM persons
-WHERE uuid = ?
+WHERE personID = ?
 AND descendant = (
   SELECT username
   FROM auth

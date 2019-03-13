@@ -56,7 +56,8 @@ abstract class BaseHandler {
 
     Object deserialize(InputStream input, Class klass) throws IOException {
         return new Gson().fromJson(
-            inputStreamToString(input).replace("userName", "username"),
+            inputStreamToString(input)
+                .replace("userName", "username"),
             klass
         );
     }

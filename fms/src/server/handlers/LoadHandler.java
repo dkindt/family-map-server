@@ -9,8 +9,6 @@ import shared.result.LoadResult;
 
 import java.io.IOException;
 
-import static java.lang.String.format;
-
 public class LoadHandler extends BaseHandler implements HttpHandler {
 
     public LoadHandler() {
