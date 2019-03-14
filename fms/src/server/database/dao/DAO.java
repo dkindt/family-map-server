@@ -91,7 +91,7 @@ abstract class DAO<T> {
         } catch (SQLException e) {
 
             throw new DatabaseException(
-                format("Failed to insert(): %s", model.toString()), e);
+                format("Failed to insert : %s", model.toString()), e);
         }
         return false;
     }
@@ -194,7 +194,10 @@ abstract class DAO<T> {
 
             statement.setString(1, id);
             int rows = statement.executeUpdate();
-            if (rows == 1) return true;
+            if (rows == 1) {
+                connection.commit();
+                return true;
+            }
 
         } catch (SQLException e) {
 

@@ -7,18 +7,20 @@ import server.exceptions.DatabaseException;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 
 public class PersonDAOTest {
 
-    private Database database;
+    private static Database db;
     private Person person;
 
     @BeforeClass
     public static void setupDatabase() {
-        Database db = new Database();
-        String path = "src/server/database/sql/db_init.sql";
+
+        db = new Database();
+        String path = "/Users/dkindt/Documents/school/2019/winter/cs240/projects/family-map/sql/db_init.sql";
         try {
             db.init(path);
         } catch(IOException e) {
@@ -31,100 +33,82 @@ public class PersonDAOTest {
     @Before
     public void setUp() {
 
-        database = new Database();
         person = new Person();
-        person.setUUID("test-uuid");
-        person.setDescendant("test-descendant");
-        person.setFirstName("test-first-name");
-        person.setLastName("test-last-name");
-        person.setGender("M-test-gender");
-        person.setFather("test-father");
-        person.setMother("test-mother");
-        person.setSpouse("test-spouse");
+        person.setUUID("personID_dkindt");
+        person.setDescendant("usesrname_dkindt");
+        person.setFirstName("Dan");
+        person.setLastName("Kindt");
+        person.setGender("M");
+        person.setFather("dkindt_father");
+        person.setMother("dkindt_mother");
+        person.setSpouse("dkindt-spouse");
     }
 
     @After
-    public void tearDown() throws Exception {
-        database.clear();
+    public void tearDown() throws DatabaseException {
+        db.clear();
     }
 
     @Test
     public void createPositive() throws DatabaseException {
-        Connection connection = database.openConnection();
-        boolean created = false;
-        boolean commit = false;
-        try {
+
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
-            created = personDAO.insert(person);
-            commit = true;
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } finally {
-            database.closeConnection(commit);
+            boolean inserted = personDAO.insert(person);
+            assertTrue(inserted);
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed in createPositive", e);
         }
-        assertTrue(created);
     }
 
     @Test
-    public void createNegative() throws DatabaseException {
+    public void createNegative() throws SQLException {
 
-        boolean created = false;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
             personDAO.insert(person);
             personDAO.insert(person);
-            database.closeConnection(true);
-        } catch (DatabaseException e) {
-            database.closeConnection(false);
-            created = false;
-        }
-        assertFalse(created);
-        Person compare = person;
-        try {
-            Connection connection = database.openConnection();
-            PersonDAO personDAO = new PersonDAO(connection);
-            compare = personDAO.get(person.getUUID());
-            database.closeConnection(true);
-        } catch (DatabaseException e) {
-            database.closeConnection(false);
-        }
 
-        assertNull(compare);
+        } catch(DatabaseException e) {
+
+            final String check = "UNIQUE constraint failed: persons.personID";
+            assertTrue(e.getMessage().contains(check));
+        }
     }
 
     @Test
     public void getPositive() throws DatabaseException {
 
-        boolean commit = false;
-        String expectedUUID = person.getUUID();
-        String actualUUID;
-        try {
-            Connection connection = database.openConnection();
+        String actualID;
+        String expectedID = person.getUUID();
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
             personDAO.insert(person);
-            Person p = personDAO.get(expectedUUID);
-            actualUUID = p.getUUID();
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            Person actual = personDAO.get(expectedID);
+            actualID = actual.getUUID();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed getPositive", e);
         }
-        assertEquals(expectedUUID, actualUUID);
+        assertEquals(expectedID, actualID);
     }
 
     @Test
     public void getNegative() throws DatabaseException {
 
-        boolean commit = false;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
-            person = personDAO.get("invalid-uuid");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            Person person = personDAO.get("INVALID_PERSON_ID");
+            assertNull(person);
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed in getNegative", e);
         }
-        assertNull(person);
     }
 
     @Test
@@ -133,32 +117,31 @@ public class PersonDAOTest {
 
     @Test
     public void deletePositive() throws DatabaseException {
-        boolean deleted;
-        boolean commit = false;
-        try {
-            Connection connection = database.openConnection();
+
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
             personDAO.insert(person);
-            deleted = personDAO.delete("test-uuid");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            boolean deleted = personDAO.delete("personID_dkindt");
+            assertTrue(deleted);
+
+        } catch (SQLException e) {
+
+            throw new DatabaseException("failed deletePositive", e);
         }
-        assertTrue(deleted);
     }
 
     @Test
     public void deleteNegative() throws DatabaseException {
-        boolean deleted;
-        boolean commit = false;
-        try {
-            Connection connection = database.openConnection();
+
+        try (Connection connection = db.openConnection()) {
+
             PersonDAO personDAO = new PersonDAO(connection);
-            deleted = personDAO.delete("_test_uuid");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            boolean deleted = personDAO.delete("INVALID_PERSON_ID");
+            assertFalse(deleted);
+
+        } catch (SQLException e) {
+            throw new DatabaseException("failed deleteNegative", e);
         }
-        assertFalse(deleted);
     }
 }
