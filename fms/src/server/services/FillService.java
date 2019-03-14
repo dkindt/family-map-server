@@ -46,7 +46,6 @@ public class FillService extends BaseService {
             db.closeConnection(true);
 
         } catch (SQLException e) {
-
             throw new DatabaseException("Unable to create Connection to Database.");
 
         } catch (DatabaseException e) {

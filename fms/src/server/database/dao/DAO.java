@@ -149,9 +149,7 @@ abstract class DAO<T> {
 
     public List<T> getAllFromToken(String token) throws AuthenticationException, DatabaseException {
 
-        // get the username for the token.
-        final String sql = SQL_USER_FROM_TOKEN;
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_USER_FROM_TOKEN)) {
 
             statement.setString(1, token);
             ResultSet resultSet = statement.executeQuery();
