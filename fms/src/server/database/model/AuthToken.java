@@ -22,6 +22,18 @@ public class AuthToken extends BaseModel {
     }
 
     @Override
+    public AuthToken clone() {
+        try {
+            return (AuthToken) super.clone();
+        } catch (CloneNotSupportedException e) {
+            AuthToken token = new AuthToken();
+            token.setToken(getToken());
+            token.setUsername(getUserName());
+            return token;
+        }
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\nAuthToken(");
         sb.append(toStringHelper("token"));

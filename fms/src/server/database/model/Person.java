@@ -93,6 +93,24 @@ public class Person extends BaseModel {
     }
 
     @Override
+    public Person clone() {
+        try {
+            return (Person) super.clone();
+        } catch (CloneNotSupportedException e) {
+            Person person = new Person();
+            person.setUUID(getUUID());
+            person.setDescendant(getDescendant());
+            person.setFirstName(getFirstName());
+            person.setLastName(getLastName());
+            person.setGender(getGender());
+            person.setFather(getFather());
+            person.setMother(getMother());
+            person.setSpouse(getSpouse());
+            return person;
+        }
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\nPerson(");
         sb.append(toStringHelper("personID"));

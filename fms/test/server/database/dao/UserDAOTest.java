@@ -10,35 +10,35 @@ import server.exceptions.DatabaseException;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static shared.util.DatabaseHelper.generateUUID;
+import static shared.util.FileHelper.getAbsolutePath;
 
 public class UserDAOTest {
 
-    private Database database;
+    private static Database db;
     private User user;
 
     @BeforeClass
-    public static void setupDatabase() {
-        Database db = new Database();
-        String path = "sql/db_init.sql";
-        try {
-            db.init(path);
-        } catch(IOException e) {
-            System.out.printf("Unable to load SQL file: '%s'\n", path);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
+    public static void setupDatabase() throws DatabaseException, IOException {
+
+        final String path = getAbsolutePath("sql/db_init.sql");
+        db = new Database();
+        db.init(path);
     }
 
     @Before
     public void setUp() throws Exception {
 
-        database = new Database();
+        db = new Database();
         user = new User();
-        user.setUsername("test-username");
+        user.setUsername("dkindt");
         user.setPassword("test-password");
         user.setEmail("test-email");
         user.setFirstName("test-first-name");
@@ -49,134 +49,131 @@ public class UserDAOTest {
 
     @After
     public void tearDown() throws Exception {
-        database.clear();
+        db.clear();
     }
 
     @Test
-    public void createPositive() throws DatabaseException {
-        Connection connection = database.openConnection();
-        boolean created = false;
-        boolean commit = false;
-        try {
+    public void insertPositive() throws DatabaseException, SQLException {
+
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
-            created = userDAO.insert(user);
-            commit = true;
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } finally {
-            database.closeConnection(commit);
+            boolean created = userDAO.insert(user);
+            assertTrue(created);
         }
-        assertTrue(created);
     }
 
     @Test
-    public void createNegative() throws DatabaseException {
+    public void insertNegative() throws SQLException {
 
-        boolean created = true;
-        boolean commit = false;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
             userDAO.insert(user);
-            created = userDAO.insert(user);
-        } catch(DatabaseException e) {
-            created = false;
-        } finally {
-            database.closeConnection(commit);
+            userDAO.insert(user);
+
+        } catch (DatabaseException e) {
+
+            final String check = "UNIQUE constraint failed: users.username";
+            assertTrue(e.getMessage().contains(check));
         }
-        assertFalse(created);
     }
 
     @Test
-    public void getWithParams() throws DatabaseException {
+    public void getWithParams() throws DatabaseException, SQLException {
 
-        boolean commit = false;
         Map<String, String> params = new LinkedHashMap<>();
-        params.put("username", "test-username");
+        params.put("username", "dkindt");
         params.put("password", "test-password");
         String expectedUsername = user.getUsername();
         String actualUsername;
-        try {
-            Connection connection = database.openConnection();
+
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
             userDAO.insert(user);
             User u = userDAO.get(params);
             actualUsername = u.getUsername();
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            assertEquals(expectedUsername, actualUsername);
         }
-        assertEquals(expectedUsername, actualUsername);
     }
 
     @Test
-    public void getPositive() throws DatabaseException {
+    public void getPositive() throws DatabaseException, SQLException {
 
-        boolean commit = false;
         String expectedUsername = user.getUsername();
         String actualUsername;
-        try {
-            Connection connection = database.openConnection();
+
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
             userDAO.insert(user);
             User u = userDAO.get(expectedUsername);
             actualUsername = u.getUsername();
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            assertEquals(expectedUsername, actualUsername);
         }
-        assertEquals(expectedUsername, actualUsername);
     }
 
     @Test
-    public void getNegative() throws DatabaseException {
+    public void getNegative() throws DatabaseException, SQLException {
 
-        boolean commit = false;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
-            user = userDAO.get("invalid-username");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            User u = userDAO.get("INVALID");
+            assertNull(u);
         }
-        assertNull(user);
     }
 
     @Test
-    public void getAll() {
+    public void getAll() throws DatabaseException, SQLException {
+
+        try (Connection connection = db.openConnection()) {
+
+            UserDAO userDAO = new UserDAO(connection);
+            User user1 = user.clone();
+            user1.setUsername(generateUUID());
+            User user2 = user.clone();
+            user2.setUsername(generateUUID());
+            User user3 = user.clone();
+            user3.setUsername(generateUUID());
+            User user4 = user.clone();
+            user4.setUsername(generateUUID());
+            User[] users = new User[]{
+                user,
+                user1,
+                user2,
+                user3,
+                user4
+            };
+            userDAO.insertBulk(Arrays.asList(users));
+
+            int expected = users.length;
+            List<User> results = userDAO.getAll();
+            assertEquals(expected, results.size());
+        }
     }
 
     @Test
-    public void deletePositive() throws DatabaseException {
+    public void deletePositive() throws DatabaseException, SQLException {
 
-        boolean commit = false;
-        boolean deleted;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
             userDAO.insert(user);
-            deleted = userDAO.delete("_test_uuid");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            boolean deleted = userDAO.delete("dkindt");
+            assertTrue(deleted);
         }
-        assertFalse(deleted);
     }
 
     @Test
-    public void deleteNegative() throws DatabaseException {
+    public void deleteNegative() throws DatabaseException, SQLException {
 
-        boolean commit = false;
-        boolean deleted;
-        try {
-            Connection connection = database.openConnection();
+        try (Connection connection = db.openConnection()) {
+
             UserDAO userDAO = new UserDAO(connection);
-            deleted = userDAO.delete("_test_uuid");
-            commit = true;
-        } finally {
-            database.closeConnection(commit);
+            boolean deleted = userDAO.delete("INVALID");
+            assertFalse(deleted);
         }
-        assertFalse(deleted);
     }
 }

@@ -1,9 +1,12 @@
 package server.database.model;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /** Represents a User row in the users table. */
 public class User extends BaseModel {
 
+    @SerializedName("userName")
     private String username;
     private String password; // TODO: should be a hash when set???
     private String email;
@@ -70,6 +73,23 @@ public class User extends BaseModel {
 
     public void setPersonID(String personID) {
         this.personID = personID;
+    }
+
+    @Override
+    public User clone() {
+        try {
+            return (User) super.clone();
+        } catch (CloneNotSupportedException e) {
+            User user = new User();
+            user.setUsername(getUsername());
+            user.setPassword(getPassword());
+            user.setEmail(getEmail());
+            user.setFirstName(getFirstName());
+            user.setLastName(getLastName());
+            user.setGender(getGender());
+            user.setPersonID(getPersonID());
+            return user;
+        }
     }
 
     @Override

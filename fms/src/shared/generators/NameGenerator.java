@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static shared.util.FileHelper.getAbsolutePath;
 import static shared.util.FileHelper.readJsonFile;
 
 public class NameGenerator {
@@ -42,7 +43,8 @@ public class NameGenerator {
 
     private Names getNames(String fileName) throws FileNotFoundException {
 
-        Path path = Paths.get("data/json", fileName).toAbsolutePath();
+        final String baseDir = getAbsolutePath("data/json");
+        Path path = Paths.get(baseDir, fileName).toAbsolutePath();
         return (Names) readJsonFile(path.toString(), Names.class);
     }
 

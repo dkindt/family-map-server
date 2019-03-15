@@ -187,6 +187,29 @@ abstract class DAO<T> {
         return results;
     }
 
+    public List<T> getAll() throws DatabaseException {
+
+        List<T> results = new ArrayList<>();
+
+        final String sql = format(SQL_SELECT_ALL, tableName);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                results.add(modelFactory(resultSet));
+            }
+
+        } catch (SQLException e) {
+
+            log.severe(e.getMessage());
+            throw new DatabaseException(
+                format("Failed to getAll(tableName='%s')", tableName), e);
+        }
+
+        log.fine(format("%s records returned from `%s` table", results.size(), tableName));
+        return results;
+    }
+
     public boolean delete(String id) throws DatabaseException {
 
         final String sql = format(SQL_DELETE, tableName, primaryKeyName);

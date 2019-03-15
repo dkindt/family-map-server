@@ -3,6 +3,8 @@ package shared.util;
 import com.google.gson.Gson;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -11,6 +13,14 @@ import static shared.util.LoggingHelper.setupLogger;
 public class FileHelper {
 
     private static final Logger log = setupLogger("fms-file-helper");
+
+    public static String getAbsolutePath(String path) {
+
+        File file = new File(System.getProperty("user.dir"));
+        String dir = file.getParent();
+        Path absPath = Paths.get(dir, path);
+        return absPath.toString();
+    }
 
     public static String loadFile(String path) throws IOException {
 

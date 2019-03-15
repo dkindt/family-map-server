@@ -1,6 +1,5 @@
 package server.services;
 
-import org.sqlite.date.ExceptionUtils;
 import server.database.Database;
 import server.database.dao.EventDAO;
 import server.database.dao.PersonDAO;
@@ -13,8 +12,6 @@ import server.exceptions.InvalidParameterException;
 import shared.request.LoadRequest;
 import shared.result.LoadResult;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -32,21 +29,13 @@ public class LoadService extends BaseService {
      * @param request payload containing lists of user, person, and event objects.
      * @return LoadResult object with message success/error message(s).
      */
-    public LoadResult load(LoadRequest request) throws InvalidParameterException {
+    public LoadResult load(LoadRequest request) {
 
         String message;
         LoadResult result = new LoadResult();
         Database db = new Database();
 
         try {
-
-            // verify that the request parameters are set and valid.
-            try {
-                request.verify();
-            } catch (Exception e) {
-                log.log(SEVERE, e.getMessage(), e);
-            }
-
             try (Connection connection = db.openConnection()) {
 
                 UserDAO userDAO = new UserDAO(connection);

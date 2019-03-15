@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import static shared.util.FileHelper.getAbsolutePath;
 import static shared.util.FileHelper.readJsonFile;
 
 public class LocationGenerator {
@@ -18,7 +19,8 @@ public class LocationGenerator {
         Event event = null;
         try {
             final Random random = new Random();
-            final Path path = Paths.get("data/json", "locations.json");
+            final String baseDir = getAbsolutePath("data/json");
+            final Path path = Paths.get(baseDir, "locations.json");
             final Locations locations = (Locations) readJsonFile(
                 path.toString(), Locations.class);
 

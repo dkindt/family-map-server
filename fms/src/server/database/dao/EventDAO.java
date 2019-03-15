@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static java.lang.String.format;
+import static shared.util.FileHelper.getAbsolutePath;
 import static shared.util.FileHelper.loadFile;
 
 public class EventDAO extends DAO<Event> {
@@ -57,7 +58,7 @@ public class EventDAO extends DAO<Event> {
 
         try {
 
-            final String sql = loadFile("sql/event_from_auth.sql");
+            final String sql = loadFile(getAbsolutePath("sql/event_from_auth.sql"));
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                 statement.setString(1, eventID);

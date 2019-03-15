@@ -2,7 +2,6 @@ package server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import server.exceptions.InvalidParameterException;
 import server.services.LoadService;
 import shared.request.LoadRequest;
 import shared.result.LoadResult;
@@ -25,19 +24,12 @@ public class LoadHandler extends BaseHandler implements HttpHandler {
 
         int status = 500;
         LoadResult result = null;
+        if (isValidRequestMethod(exchange)) {
 
-        try {
-            if (isValidRequestMethod(exchange)) {
-
-                LoadRequest request = (LoadRequest) deserialize(
-                    exchange.getRequestBody(), LoadRequest.class
-                );
-                result = new LoadService().load(request);
-            }
-        } catch (InvalidParameterException e) {
-
-            result = new LoadResult(e.getMessage());
-            status = 400;
+            LoadRequest request = (LoadRequest) deserialize(
+                exchange.getRequestBody(), LoadRequest.class
+            );
+            result = new LoadService().load(request);
         }
         sendJSONResponse(result, exchange, status);
     }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.*;
 
 import static java.lang.String.format;
+import static shared.util.FileHelper.getAbsolutePath;
 import static shared.util.FileHelper.loadFile;
 
 public class PersonDAO extends DAO<Person> {
@@ -54,7 +55,7 @@ public class PersonDAO extends DAO<Person> {
 
         try {
 
-            final String sql = loadFile("sql/person_from_auth.sql");
+            final String sql = loadFile(getAbsolutePath("sql/person_from_auth.sql"));
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                 statement.setString(1, personID);
