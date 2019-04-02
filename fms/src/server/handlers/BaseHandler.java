@@ -34,7 +34,7 @@ abstract class BaseHandler {
             exchange,
             new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)),
             status
-            );
+        );
     }
 
     void sendResponse(HttpExchange exchange, InputStream input, int status) throws IOException {

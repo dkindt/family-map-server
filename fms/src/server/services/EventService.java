@@ -9,6 +9,7 @@ import shared.result.EventResult;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -60,6 +61,7 @@ public class EventService extends BaseService {
     public EventResult getAllEvents(String token)
         throws AuthenticationException, DatabaseException {
 
+        log.info("Requesting all events for token: " + token);
         try (Connection connection = database.openConnection()) {
 
             eventDAO = new EventDAO(connection);

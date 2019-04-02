@@ -43,7 +43,7 @@ public class NameGenerator {
 
     private Names getNames(String fileName) throws FileNotFoundException {
 
-        final String baseDir = getAbsolutePath("data/json");
+        final String baseDir = getAbsolutePath("family-map/data/json");
         Path path = Paths.get(baseDir, fileName).toAbsolutePath();
         return (Names) readJsonFile(path.toString(), Names.class);
     }

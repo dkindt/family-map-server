@@ -7,7 +7,9 @@ import server.handlers.*;
 import server.handlers.FileHandler;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.logging.*;
 
 import static java.util.logging.Level.SEVERE;
@@ -74,7 +76,15 @@ public class Server {
         // in the background.
         server.start();
 
-        log.info(String.format("Server started at: http:/%s", server.getAddress()));
+        try {
+            // Log the IP address that clients can connect to
+            InetAddress localhost = InetAddress.getLocalHost();
+            log.info(String.format("Server started at: http://%s:%s",
+                localhost.getHostAddress().trim(), portNumber));
+        } catch (UnknownHostException e) {
+            log.severe(e.getMessage());
+            return;
+        }
     }
 
     // "main" method for the server program

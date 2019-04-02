@@ -34,12 +34,13 @@ public class RegistrationService extends BaseService {
      */
     public RegistrationResult register(RegistrationRequest request) throws DatabaseException {
 
-        log.entering("RegistrationService", "register");
+        log.info("Registering new User: " + request.getUsername());
 
         RegistrationResult result;
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
 
+            log.info("Attempting connection to Database");
             UserDAO userDAO = new UserDAO(connection);
             User user = userDAO.get(request.getUsername());
 
@@ -84,6 +85,7 @@ public class RegistrationService extends BaseService {
                 result = new RegistrationResult(token, user.getUsername(), person.getUUID());
 
             } else {
+                log.info("Username already taken");
                 result = new RegistrationResult("username already taken!");
             }
 

@@ -19,7 +19,7 @@ public class LocationGenerator {
         Event event = null;
         try {
             final Random random = new Random();
-            final String baseDir = getAbsolutePath("data/json");
+            final String baseDir = getAbsolutePath("family-map/data/json");
             final Path path = Paths.get(baseDir, "locations.json");
             final Locations locations = (Locations) readJsonFile(
                 path.toString(), Locations.class);

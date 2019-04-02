@@ -30,6 +30,7 @@ public class LoginService extends BaseService {
      */
     public LoginResult login(LoginRequest request) throws DatabaseException {
 
+        log.info("LoginRequest received");
         Database db = new Database();
         try (Connection connection = db.openConnection()) {
 
