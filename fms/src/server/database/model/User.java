@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 /** Represents a User row in the users table. */
 public class User extends BaseModel {
 
-    @SerializedName("userName")
     private String username;
     private String password; // TODO: should be a hash when set???
     private String email;
